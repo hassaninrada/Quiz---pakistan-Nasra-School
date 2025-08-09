@@ -47,12 +47,3 @@ function confirmDeleteAll() {
 filterResults();
 
 
-// Fetch results live from Firestore
-db.collection("quizResults").orderBy("timestamp", "desc").onSnapshot(snapshot => {
-    const resultsDiv = document.getElementById("results");
-    resultsDiv.innerHTML = "";
-    snapshot.forEach(doc => {
-        const data = doc.data();
-        resultsDiv.innerHTML += `<p><strong>${data.name}</strong>: ${data.score}</p>`;
-    });
-});
