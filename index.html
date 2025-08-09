@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Login - Quiz</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-page">
+<!-- Nasra School Logo (Top-Left) -->
+<div class="nasra-logo">
+  <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo">
+</div>
+
+<!-- Pakistan Flag (Top-Right) -->
+<div class="pakistan-flag">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
+</div>
+
+  <div class="container">
+    <h2>Student Login</h2>
+    <input type="text" id="studentName" placeholder="Enter your name">
+    <select id="studentClass">
+      <option value="">Select Class</option>
+      <option value="6">Class 6</option>
+      <option value="7">Class 7</option>
+      <option value="8">Class 8</option>
+      <option value="9">Class 9</option>
+      <option value="10">Class 10</option>
+    </select>
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
+  <script>
+    function startQuiz() {
+      const name = document.getElementById('studentName').value.trim();
+      const studentClass = document.getElementById('studentClass').value;
+      if (!name || !studentClass) return alert("Please enter name and class.");
+      localStorage.setItem("studentData", JSON.stringify({ name, studentClass }));
+      window.location.href = "quiz.html";
+    }
+    
+  </script>
+</body>
+</html>
