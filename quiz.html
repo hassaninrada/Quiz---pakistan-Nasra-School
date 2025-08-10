@@ -320,8 +320,10 @@
       }
     }, 1000);
 
+
+
 function sendResult() {
-  fetch("https://script.google.com/macros/s/AKfycbx_BaTDRAvfcTrDMMIRYHT2Te4jeA10ZVd3TSdwLZSWAJGjrmpDBugjGs7MTXVkxCeqgQ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbwk31ARtTpKXxriYaVbDbarId14GIguo_974Qg3FMUMXsdb4PAtH52xh2hJkKg34Qot-g/exec", {
     method: "POST",
     body: JSON.stringify({
       name: "Ali Khan",
@@ -337,7 +339,6 @@ function sendResult() {
   .then(d => console.log("Saved!", d))
   .catch(err => console.error("Error:", err));
 }
-
 
 
   </script>
