@@ -22,7 +22,23 @@ function renderChart(results) {
     }
   });
 }
-
+function sendResult() {
+  fetch("https://script.google.com/macros/s/AKfycbx_BaTDRAvfcTrDMMIRYHT2Te4jeA10ZVd3TSdwLZSWAJGjrmpDBugjGs7MTXVkxCeqgQ/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name: "Ali Khan",
+      class: "Grade 8",
+      score: 18,
+      total: 20,
+      timeString: "02:15",
+      answers: { Q1: "A", Q2: "C", Q3: "B" }
+    }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(d => console.log("Saved!", d))
+  .catch(err => console.error("Error:", err));
+}
 function downloadCSV() {
   const data = JSON.parse(localStorage.getItem("quizResults") || "[]");
   let csv = "Name,Class,Score,Total,Time\n";
