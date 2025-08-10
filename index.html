@@ -39,7 +39,26 @@
       localStorage.setItem("studentData", JSON.stringify({ name, studentClass }));
       window.location.href = "quiz.html";
     }
-    
+ 
+function sendResult() {
+  fetch("YOUR_WEB_APP_URL", {
+    method: "POST",
+    body: JSON.stringify({
+      name: "Ali Khan",
+      class: "Grade 8",
+      score: 18,
+      total: 20,
+      timeString: "02:15",
+      answers: { Q1: "A", Q2: "C", Q3: "B" }
+    }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(d => console.log("Saved!", d))
+  .catch(err => console.error("Error:", err));
+}
+
+
   </script>
 </body>
 </html>
