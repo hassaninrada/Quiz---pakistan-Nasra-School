@@ -22,23 +22,7 @@ function renderChart(results) {
     }
   });
 }
-function sendResult() {
-  fetch("https://script.google.com/macros/s/AKfycbzbR62DchX1dfScvAqYSvAurJ2Wdk-vwZsCnj3HcilcVQ8kwNjpahFq5UE0HxpY3Wc/exec", {
-    method: "POST",
-    body: JSON.stringify({
-      name: "Ali Khan",
-      class: "Grade 8",
-      score: 18,
-      total: 20,
-      timeString: "02:15",
-      answers: { Q1: "A", Q2: "C", Q3: "B" }
-    }),
-    headers: { "Content-Type": "application/json" }
-  })
-  .then(res => res.json())
-  .then(d => console.log("Saved!", d))
-  .catch(err => console.error("Error:", err));
-}
+
 function downloadCSV() {
   const data = JSON.parse(localStorage.getItem("quizResults") || "[]");
   let csv = "Name,Class,Score,Total,Time\n";
@@ -61,3 +45,11 @@ function confirmDeleteAll() {
 }
 
 filterResults();
+fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhp45yl62aJ859TgzFePq4nT3tHVKjb2-GnNhTKS0nLJwbuTZNOEnSxjGoyO_obCiliGK6n9mcWnGFmrJD7wmqXO27tsov6AgM1IDX1vQXVk8uPwPg-wCtVY0iqD5iPqT-dhC8RaFayhl3nvNJmcGt2n5bOVuk1WRO4crfCm7_JgQBIe_Y9RmqS3xQZ3hrrqwZGbVKbVADbJUPzfhWKA_op-7jKxQuKN6ry3IngcNulLJgbSu449N6mdTbjXo-LWYQc_33HdOK1i6NTenmfWgCJu7l7e8R8cGiB8FX8&lib=Mwo3KNCT54ZZ9q0I7sNG4WI3sArGKClt1")
+  .then(response => response.json())
+  .then(data => {
+    console.log(data); // See data in console
+    // Your logic to display results
+  })
+  .catch(error => console.error("Error fetching data:", error));
+
