@@ -23,7 +23,7 @@ function renderChart(results) {
   });
 }
 function sendResult() {
-  fetch("https://script.google.com/macros/s/AKfycbx_BaTDRAvfcTrDMMIRYHT2Te4jeA10ZVd3TSdwLZSWAJGjrmpDBugjGs7MTXVkxCeqgQ/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzbR62DchX1dfScvAqYSvAurJ2Wdk-vwZsCnj3HcilcVQ8kwNjpahFq5UE0HxpY3Wc/exec", {
     method: "POST",
     body: JSON.stringify({
       name: "Ali Khan",
