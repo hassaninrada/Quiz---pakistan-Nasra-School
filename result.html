@@ -1,81 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Quiz Results</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background: #007bff;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background: #f2f2f2;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Live Quiz Results</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background: #007bff; color: white; }
+    tr:nth-child(even) { background: #f2f2f2; }
+  </style>
 </head>
 <body>
-    <h2>📊 Live Quiz Results</h2>
-    <table id="resultsTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Class</th>
-                <th>Score</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td colspan="4">Loading...</td></tr>
-        </tbody>
-    </table>
+  <h2>Live Quiz Results</h2>
+  <table id="resultsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Class</th>
+        <th>Score</th>
+        <th>Total</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="5">Loading...</td></tr>
+    </tbody>
+  </table>
 
-    <script>
-        const sheetURL = "https://docs.google.com/spreadsheets/d/1_tR9TPFN3JQ1iK0LinnohDJsb8JfO8LWcVV0HuvQBIQ/gviz/tq?tqx=out:json";
+  <script>
+    const scriptURL = 
+      "https://script.google.com/macros/s/AKfycbzJVYox8DDbLrdCky5mdpBh9OcXh58XwXcn_Zr4_eEu7YoVjdX7s6OzEw1eIeP-02VXcQ/exec";
 
-        async function fetchResults() {
-            try {
-                const res = await fetch(sheetURL);
-                const text = await res.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                const rows = json.table.rows;
+    async function fetchResults() {
+      try {
+        const res = await fetch(scriptURL);
+        let text = await res.text();
+        const from = text.indexOf('{');
+        text = text.slice(from); // trim prefixes
+        const data = JSON.parse(text);
 
-                let html = "";
-                rows.forEach(row => {
-                    html += `
-                        <tr>
-                            <td>${row.c[0]?.v || ""}</td>
-                            <td>${row.c[1]?.v || ""}</td>
-                            <td>${row.c[2]?.v || ""}</td>
-                            <td>${row.c[3]?.v || ""}</td>
-                        </tr>
-                    `;
-                });
+        if (!Array.isArray(data)) throw new Error("Unexpected format");
 
-                document.querySelector("#resultsTable tbody").innerHTML = html;
-            } catch (err) {
-                console.error(err);
-                document.querySelector("#resultsTable tbody").innerHTML = `<tr><td colspan="4">Error loading data</td></tr>`;
-            }
-        }
+        const rowsHtml = data.map(r => `
+          <tr>
+            <td>${r.name || ""}</td>
+            <td>${r.class || ""}</td>
+            <td>${r.score || ""}</td>
+            <td>${r.total || ""}</td>
+            <td>${r.time || ""}</td>
+          </tr>
+        `).join("");
 
-        fetchResults();
-        setInterval(fetchResults, 5000); // 🔄 Refresh every 5 seconds
-    </script>
+        document.querySelector("#resultsTable tbody").innerHTML =
+          rowsHtml || `<tr><td colspan="5">No results</td></tr>`;
+      } catch (err) {
+        console.error(err);
+        document.querySelector("#resultsTable tbody").innerHTML =
+          `<tr><td colspan="5">Error loading data</td></tr>`;
+      }
+    }
+
+    fetchResults();
+    setInterval(fetchResults, 5000); // Update every 5 seconds
+  </script>
 </body>
 </html>
