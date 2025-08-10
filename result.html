@@ -1,68 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Live Quiz Results</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    th { background: #007bff; color: white; }
-    tr:nth-child(even) { background: #f2f2f2; }
-  </style>
+  <title>Results</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h2>Live Quiz Results</h2>
-  <table id="resultsTable">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Class</th>
-        <th>Score</th>
-        <th>Total</th>
-        <th>Time</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td colspan="5">Loading...</td></tr>
-    </tbody>
-  </table>
+<body class="result-page">
+  <!-- Nasra School Logo (Top-Left) -->
+<div class="nasra-logo">
+  <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo">
+</div>
 
-  <script>
-    const scriptURL = 
-      "https://script.google.com/macros/s/AKfycbzJVYox8DDbLrdCky5mdpBh9OcXh58XwXcn_Zr4_eEu7YoVjdX7s6OzEw1eIeP-02VXcQ/exec";
+<!-- Pakistan Flag (Top-Right) -->
+<div class="pakistan-flag">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
+</div>
 
-    async function fetchResults() {
-      try {
-        const res = await fetch(scriptURL);
-        let text = await res.text();
-        const from = text.indexOf('{');
-        text = text.slice(from); // trim prefixes
-        const data = JSON.parse(text);
-
-        if (!Array.isArray(data)) throw new Error("Unexpected format");
-
-        const rowsHtml = data.map(r => `
-          <tr>
-            <td>${r.name || ""}</td>
-            <td>${r.class || ""}</td>
-            <td>${r.score || ""}</td>
-            <td>${r.total || ""}</td>
-            <td>${r.time || ""}</td>
-          </tr>
-        `).join("");
-
-        document.querySelector("#resultsTable tbody").innerHTML =
-          rowsHtml || `<tr><td colspan="5">No results</td></tr>`;
-      } catch (err) {
-        console.error(err);
-        document.querySelector("#resultsTable tbody").innerHTML =
-          `<tr><td colspan="5">Error loading data</td></tr>`;
-      }
-    }
-
-    fetchResults();
-    setInterval(fetchResults, 5000); // Update every 5 seconds
-  </script>
+  <div class="container">
+    <h2>Quiz Results</h2>
+    <select id="classFilter" onchange="filterResults()">
+      <option value="all">All Classes</option>
+      <option value="6">Class 6</option>
+      <option value="7">Class 7</option>
+      <option value="8">Class 8</option>
+      <option value="9">Class 9</option>
+      <option value="10">Class 10</option>
+    </select>
+    <canvas id="barChart"></canvas>
+    <button onclick="downloadCSV()">Download CSV</button>
+    <button onclick="confirmDeleteAll()">Delete All</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="result.js"></script>
+   
 </body>
 </html>
+
+
+
+
+
