@@ -1,4 +1,14 @@
-
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC956df_ikTGvqVVl5gJXI0O5rau9vnT1A",
+  authDomain: "quiz-ae8f1.firebaseapp.com",
+  databaseURL: "https://quiz-ae8f1-default-rtdb.firebaseio.com",
+  projectId: "quiz-ae8f1",
+  storageBucket: "quiz-ae8f1.firebasestorage.app",
+  messagingSenderId: "976773104820",
+  appId: "1:976773104820:web:e64a23abc7a5ed896b83e1",
+  measurementId: "G-4DH7YQWTG0"
+};
 const ctx = document.getElementById("barChart").getContext("2d");
 let chart;
 
