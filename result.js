@@ -45,3 +45,27 @@ function confirmDeleteAll() {
 }
 
 filterResults();
+ type="module"
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyC956df_ikTGvqVVl5gJXI0O5rau9vnT1A",
+    authDomain: "quiz-ae8f1.firebaseapp.com",
+    databaseURL: "https://quiz-ae8f1-default-rtdb.firebaseio.com",
+    projectId: "quiz-ae8f1",
+    storageBucket: "quiz-ae8f1.firebasestorage.app",
+    messagingSenderId: "976773104820",
+    appId: "1:976773104820:web:e64a23abc7a5ed896b83e1",
+    measurementId: "G-4DH7YQWTG0"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
