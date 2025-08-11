@@ -121,6 +121,15 @@ function renderTable(results) {
 
 // Load data on page load
 loadResults();
+  const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzmf9_t1P1kLDWEfa4UGnC1ikU5QuZytWk6zfBxHsOfhYE3JPbzLFaVG4FVP_W9mXp4duQC0sdIGsf/pub?output=csv";
+const PROXY_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_URL);
+
+async function loadResults() {
+  const res = await fetch(PROXY_URL);
+  const text = await res.text();
+  // rest of your CSV parsing code here...
+}
+
 </script>
 
 </body>
