@@ -1,118 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Live Quiz Results — Pakistan Quiz</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f4f7fb; padding: 20px; color: #333; }
-    h1 { text-align: center; }
-    .controls { text-align: center; margin-bottom: 20px; }
-    select { padding: 8px 12px; font-size: 14px; }
-    canvas { display: block; margin: 0 auto; max-width: 800px; height: 400px; background: white; border-radius: 8px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background: #dde5f0; }
-    .small { font-size: 13px; color: #666; }
-  </style>
+<meta charset="UTF-8">
+<title>Quiz Results - Live</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f4; }
+  .container {
+    background: white; padding: 20px; border-radius: 10px;
+    box-shadow: 0 0 10px #ccc; max-width: 900px; margin: auto;
+  }
+  h1 { text-align: center; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+  select, button { padding: 8px; margin: 5px 0; }
+  canvas { margin-top: 20px; }
+</style>
 </head>
 <body>
-  <h1>Pakistan Quiz Results</h1>
-  <div class="controls">
-    <label for="classFilter">Filter by Class: </label>
-    <select id="classFilter">
-      <option value="all">All Classes</option>
-      <option value="6">Class 6</option>
-      <option value="7">Class 7</option>
-      <option value="8">Class 8</option>
-      <option value="9">Class 9</option>
-      <option value="10">Class 10</option>
-    </select>
-  </div>
-  <canvas id="scoreChart"></canvas>
-  <div class="small">Scores are displayed as “score / total (30)”.</div>
-  <table id="resultsTable">
-    <thead>
-      <tr><th>Name</th><th>Class</th><th>Score</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
 
-  <script>
-    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzmf9_t1P1kLDWEfa4UGnC1ikU5QuZytWk6zfBxHsOfhYE3JPbzLFaVG4FVP_W9mXp4duQC0sdIGsf/pub?output=csv";
+<div class="container">
+  <h1>Live Quiz Results</h1>
 
-    let allData = [];
-    let chart = null;
+  <label for="classFilter">Filter by Class:</label>
+  <select id="classFilter" onchange="filterResults()">
+    <option value="all">All</option>
+  </select>
 
-    const filterEl = document.getElementById("classFilter");
-    const tbodyEl = document.querySelector("#resultsTable tbody");
-    const ctx = document.getElementById("scoreChart").getContext("2d");
+  <canvas id="barChart" width="400" height="200"></canvas>
+  <div id="resultsTable"></div>
+</div>
 
-    filterEl.addEventListener("change", () => renderUI());
+<script>
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzmf9_t1P1kLDWEfa4UGnC1ikU5QuZytWk6zfBxHsOfhYE3JPbzLFaVG4FVP_W9mXp4duQC0sdIGsf/pub?output=csv";
+const ctx = document.getElementById("barChart").getContext("2d");
+let chart;
+let allResults = [];
 
-    async function fetchData() {
-      const res = await fetch(csvUrl);
-      const text = await res.text();
-      const rows = text.trim().split("\n").map(r => r.split(","));
-      rows.shift(); // remove headers
-      allData = rows.map(r => ({
-        name: r[1],
-        class: r[2],
-        score: parseInt(r[3]),
-        total: 30
-      }));
-    }
+async function loadResults() {
+  const res = await fetch(SHEET_URL);
+  const text = await res.text();
+  const rows = text.trim().split("\n").map(r => r.split(","));
 
-    function renderUI() {
-      const cls = filterEl.value;
-      const data = cls === "all" ? allData : allData.filter(d => d.class === cls);
+  // Assuming first row is header: Name,Class,Score,Total,Time
+  allResults = rows.slice(1).map(row => ({
+    name: row[0],
+    class: row[1],
+    score: Number(row[2]),
+    total: Number(row[3]),
+    time: row[4]
+  }));
 
-      // Table
-      tbodyEl.innerHTML = "";
-      data.forEach(d => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${d.name}</td><td>${d.class}</td><td>${d.score}/${d.total}</td>`;
-        tbodyEl.appendChild(tr);
-      });
+  populateClassFilter();
+  filterResults();
+}
 
-      // Chart
-      const labels = data.map(d => d.name);
-      const scores = data.map(d => d.score);
+function populateClassFilter() {
+  const classes = [...new Set(allResults.map(r => r.class))];
+  const select = document.getElementById("classFilter");
+  select.innerHTML = `<option value="all">All</option>` +
+                     classes.map(c => `<option value="${c}">${c}</option>`).join("");
+}
 
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: "Score",
-            data: scores,
-            backgroundColor: "#4285f4"
-          }]
-        },
-        options: {
-          scales: {
-            y: { beginAtZero: true, max: 30 }
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: ctx => `${ctx.parsed.y} / 30`
-              }
+function filterResults() {
+  const filter = document.getElementById("classFilter").value;
+  const filtered = filter === "all" ? allResults : allResults.filter(r => r.class === filter);
+  renderChart(filtered);
+  renderTable(filtered);
+}
+
+function renderChart(results) {
+  const labels = results.map(r => r.name);
+  const scores = results.map(r => r.score);
+
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Score (out of 30)",
+        data: scores,
+        backgroundColor: "rgba(75, 192, 192, 0.6)"
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              let original = results[context.dataIndex];
+              return `${original.score}/${original.total}`;
             }
           }
         }
-      });
+      },
+      scales: {
+        y: { beginAtZero: true, max: 30, ticks: { stepSize: 1 } }
+      }
     }
+  });
+}
 
-    // Initial load
-    (async () => {
-      await fetchData();
-      renderUI();
-    })();
-  </script>
- <script src="result.js"></script>
+function renderTable(results) {
+  let tableHTML = `<table>
+    <tr><th>Name</th><th>Class</th><th>Score</th><th>Total</th><th>Time</th></tr>`;
+  results.forEach(r => {
+    tableHTML += `<tr>
+      <td>${r.name}</td>
+      <td>${r.class}</td>
+      <td>${r.score}</td>
+      <td>${r.total}</td>
+      <td>${r.time}</td>
+    </tr>`;
+  });
+  tableHTML += `</table>`;
+  document.getElementById("resultsTable").innerHTML = tableHTML;
+}
+
+// Load data on page load
+loadResults();
+</script>
+
 </body>
 </html>
-
