@@ -1,25 +1,27 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Results</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Live Quiz Results — Pakistan Quiz</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f7fb; padding: 20px; color: #333; }
+    h1 { text-align: center; }
+    .controls { text-align: center; margin-bottom: 20px; }
+    select { padding: 8px 12px; font-size: 14px; }
+    canvas { display: block; margin: 0 auto; max-width: 800px; height: 400px; background: white; border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background: #dde5f0; }
+    .small { font-size: 13px; color: #666; }
+  </style>
 </head>
-<body class="result-page">
-  <!-- Nasra School Logo (Top-Left) -->
-<div class="nasra-logo">
-  <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo">
-</div>
-
-<!-- Pakistan Flag (Top-Right) -->
-<div class="pakistan-flag">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
-</div>
-
-  <div class="container">
-    <h2>Quiz Results</h2>
-    <select id="classFilter" onchange="filterResults()">
+<body>
+  <h1>Pakistan Quiz Results</h1>
+  <div class="controls">
+    <label for="classFilter">Filter by Class: </label>
+    <select id="classFilter">
       <option value="all">All Classes</option>
       <option value="6">Class 6</option>
       <option value="7">Class 7</option>
@@ -27,12 +29,89 @@
       <option value="9">Class 9</option>
       <option value="10">Class 10</option>
     </select>
-    <canvas id="barChart"></canvas>
-    <button onclick="downloadCSV()">Download CSV</button>
-    <button onclick="confirmDeleteAll()">Delete All</button>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="result.js"></script>
-   
+  <canvas id="scoreChart"></canvas>
+  <div class="small">Scores are displayed as “score / total (30)”.</div>
+  <table id="resultsTable">
+    <thead>
+      <tr><th>Name</th><th>Class</th><th>Score</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzmf9_t1P1kLDWEfa4UGnC1ikU5QuZytWk6zfBxHsOfhYE3JPbzLFaVG4FVP_W9mXp4duQC0sdIGsf/pub?output=csv";
+
+    let allData = [];
+    let chart = null;
+
+    const filterEl = document.getElementById("classFilter");
+    const tbodyEl = document.querySelector("#resultsTable tbody");
+    const ctx = document.getElementById("scoreChart").getContext("2d");
+
+    filterEl.addEventListener("change", () => renderUI());
+
+    async function fetchData() {
+      const res = await fetch(csvUrl);
+      const text = await res.text();
+      const rows = text.trim().split("\n").map(r => r.split(","));
+      rows.shift(); // remove headers
+      allData = rows.map(r => ({
+        name: r[1],
+        class: r[2],
+        score: parseInt(r[3]),
+        total: 30
+      }));
+    }
+
+    function renderUI() {
+      const cls = filterEl.value;
+      const data = cls === "all" ? allData : allData.filter(d => d.class === cls);
+
+      // Table
+      tbodyEl.innerHTML = "";
+      data.forEach(d => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${d.name}</td><td>${d.class}</td><td>${d.score}/${d.total}</td>`;
+        tbodyEl.appendChild(tr);
+      });
+
+      // Chart
+      const labels = data.map(d => d.name);
+      const scores = data.map(d => d.score);
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "Score",
+            data: scores,
+            backgroundColor: "#4285f4"
+          }]
+        },
+        options: {
+          scales: {
+            y: { beginAtZero: true, max: 30 }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.parsed.y} / 30`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Initial load
+    (async () => {
+      await fetchData();
+      renderUI();
+    })();
+  </script>
 </body>
 </html>
+
