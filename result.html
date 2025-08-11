@@ -13,7 +13,7 @@
   h1 { text-align: center; }
   table { width: 100%; border-collapse: collapse; margin-top: 20px; }
   th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-  select, button { padding: 8px; margin: 5px 0; }
+  select { padding: 8px; margin: 5px 0; }
   canvas { margin-top: 20px; }
 </style>
 </head>
@@ -33,12 +33,14 @@
 
 <script>
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzmf9_t1P1kLDWEfa4UGnC1ikU5QuZytWk6zfBxHsOfhYE3JPbzLFaVG4FVP_W9mXp4duQC0sdIGsf/pub?output=csv";
+const PROXY_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_URL);
+
 const ctx = document.getElementById("barChart").getContext("2d");
 let chart;
 let allResults = [];
 
 async function loadResults() {
-  const res = await fetch(SHEET_URL);
+  const res = await fetch(PROXY_URL);
   const text = await res.text();
   const rows = text.trim().split("\n").map(r => r.split(","));
 
@@ -119,18 +121,11 @@ function renderTable(results) {
   document.getElementById("resultsTable").innerHTML = tableHTML;
 }
 
-// Load data on page load
+// Load data on page load and refresh every 30s
 loadResults();
-  const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRzmf9_t1P1kLDWEfa4UGnC1ikU5QuZytWk6zfBxHsOfhYE3JPbzLFaVG4FVP_W9mXp4duQC0sdIGsf/pub?output=csv";
-const PROXY_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(SHEET_URL);
-
-async function loadResults() {
-  const res = await fetch(PROXY_URL);
-  const text = await res.text();
-  // rest of your CSV parsing code here...
-}
-
+setInterval(loadResults, 30000);
 </script>
 
 </body>
 </html>
+
