@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Live Quiz Results (Chart + Delete)</title>
+<title>Live Quiz Results (Pakistan Quiz)</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   body { font-family: Arial, sans-serif; background:#f4f7fb; margin:20px; color:#222; }
@@ -46,10 +46,10 @@
 </div>
 
 <script>
-/* CONFIG — REPLACE WEB_APP_URL with your deployed Apps Script URL */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxSACUUHjRSiYVeBPTG69VMcp7T_5lOZ665jWH9Mq6szIM-LneqztsWG8ZoVf4IpUN0/exec"; // <<--- replace this
-const SECRET_TOKEN = "pkquiz2025"; // must match Apps Script token
-const QUIZ_TOTAL = 30; // change if different
+/* CONFIG — replace this with your own Web App URL */
+const WEB_APP_URL = "YOUR_WEB_APP_URL_HERE"; // deployed Apps Script web app link
+const SECRET_TOKEN = "pkquiz2025"; // must match Apps Script code
+const QUIZ_TOTAL = 30; // change if needed
 
 const classFilter = document.getElementById("classFilter");
 const refreshBtn = document.getElementById("refreshBtn");
@@ -66,30 +66,27 @@ async function fetchAndRender(){
     const res = await fetch(WEB_APP_URL);
     const data = await res.json();
     if (!data || data.status !== "ok") throw new Error("Bad response from server");
-    rows = data.rows.map(r => {
-      return {
-        __row: r.__row,
-        Timestamp: r.Timestamp || r.Date || r.timestamp || "",
-        Name: r.Name || r.name || r["Student Name"] || r["Name"] || "",
-        Class: (r.Class || r.class || r["Class"] || "").toString(),
-        Score: Number(r.Score || r.score || r["Score"] || 0),
-        Total: Number(r.Total || r.total || QUIZ_TOTAL),
-        TimeTaken: r["Time Taken"] || r.time || r.Time || ""
-      };
-    });
+    rows = data.rows.map(r => ({
+      __row: r.__row,
+      Timestamp: r.Timestamp || r.Date || "",
+      Name: r.Name || "",
+      Class: r.Class || "",
+      Score: Number(r.Score || 0),
+      Total: Number(r.Total || QUIZ_TOTAL),
+      TimeTaken: r["Time Taken"] || ""
+    }));
 
     populateClassDropdown();
     applyFilterAndRender();
   } catch (err) {
     console.error(err);
-    tableContainer.innerHTML = "<div style='color:#b00'>Error fetching data. Check Apps Script deploy and that you updated WEB_APP_URL.</div>";
+    tableContainer.innerHTML = "<div style='color:#b00'>Error fetching data. Check Apps Script deploy and WEB_APP_URL.</div>";
   }
 }
 
 function populateClassDropdown(){
-  const set = new Set(rows.map(r => r.Class).filter(v => v && v !== ""));
-  const options = ["<option value='all'>All Classes</option>", ...Array.from(set).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`) ];
-  classFilter.innerHTML = options.join("");
+  const set = new Set(rows.map(r => r.Class).filter(v => v));
+  classFilter.innerHTML = ["<option value='all'>All Classes</option>", ...Array.from(set).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)].join("");
 }
 
 function applyFilterAndRender(){
@@ -108,23 +105,27 @@ function renderChart(data){
   if (chart) chart.destroy();
   chart = new Chart(ctx, {
     type: "bar",
-    data: { labels, datasets: [{ label: "Score (out of " + maxTotal + ")", data: scores, backgroundColor: "rgba(54,162,235,0.7)", borderColor: "rgba(54,162,235,1)", borderWidth:1 }]},
+    data: {
+      labels,
+      datasets: [{
+        label: "Score (out of " + maxTotal + ")",
+        data: scores,
+        backgroundColor: "rgba(54,162,235,0.7)",
+        borderColor: "rgba(54,162,235,1)",
+        borderWidth:1
+      }]
+    },
     options: {
       maintainAspectRatio: false,
       plugins: {
         tooltip: {
           callbacks: {
-            label: ctx => {
-              const i = ctx.dataIndex;
-              const s = scores[i];
-              const tot = totals[i] || maxTotal;
-              return `${s}/${tot}`;
-            }
+            label: ctx => `${scores[ctx.dataIndex]}/${totals[ctx.dataIndex] || maxTotal}`
           }
         },
         legend: { display: false }
       },
-      scales: { y: { beginAtZero: true, max: maxTotal, ticks: { stepSize: 1 }, title: { display:true, text:'Score' } }, x: { ticks: { autoSkip:false } } }
+      scales: { y: { beginAtZero: true, max: maxTotal, ticks: { stepSize: 1 } } }
     }
   });
 }
@@ -134,11 +135,11 @@ function renderTable(data){
   let html = `<table><thead><tr><th>Timestamp</th><th>Name</th><th>Class</th><th>Score</th><th>Time</th><th>Action</th></tr></thead><tbody>`;
   data.forEach(r => {
     html += `<tr>
-      <td>${escapeHtml(String(r.Timestamp || ""))}</td>
+      <td>${escapeHtml(r.Timestamp)}</td>
       <td>${escapeHtml(r.Name)}</td>
       <td>${escapeHtml(r.Class)}</td>
-      <td>${escapeHtml(String(r.Score))}/${escapeHtml(String(r.Total))}</td>
-      <td>${escapeHtml(r.TimeTaken || "")}</td>
+      <td>${r.Score}/${r.Total}</td>
+      <td>${escapeHtml(r.TimeTaken)}</td>
       <td><button class="danger" onclick="deleteRow(${r.__row})">Delete</button></td>
     </tr>`;
   });
@@ -150,13 +151,17 @@ async function deleteRow(rowNumber){
   if (!confirm("Delete this result from the sheet?")) return;
   try {
     const payload = { action: "delete", row: rowNumber, token: SECRET_TOKEN };
-    const res = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "application/json" } });
+    const res = await fetch(WEB_APP_URL, {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: { "Content-Type": "application/json" }
+    });
     const data = await res.json();
     if (data && data.status === "ok") {
       alert("Deleted row " + rowNumber);
       fetchAndRender();
     } else {
-      alert("Delete failed: " + (data && data.message ? data.message : "unknown"));
+      alert("Delete failed: " + (data.message || "unknown"));
     }
   } catch (err) {
     console.error(err);
@@ -164,11 +169,11 @@ async function deleteRow(rowNumber){
   }
 }
 
+function escapeHtml(s){ return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
 // initial load & auto-refresh
 fetchAndRender();
 setInterval(fetchAndRender, 30000);
-
-function escapeHtml(s){ return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 </script>
 </body>
 </html>
