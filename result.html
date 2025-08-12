@@ -57,8 +57,34 @@
     });
   }
 
-  // Example: call this when quiz ends
-  // saveScore(8); // if the user scored 8
+function startQuiz() {
+  const studentClass = document.getElementById('studentClass').value.trim();
+  const name = document.getElementById('studentName').value.trim();
+
+  if (!studentClass || !name) {
+    alert("Please select your Class and enter your Name.");
+    return;
+  }
+
+  // Save locally for quiz.html
+  localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
+
+  // Send to Google Apps Script
+  fetch("https://script.google.com/macros/s/AKfycbzAjWkiVsaq6oweRy52FlsrlshoHByjyGiNvbyg-jvGWfxQdmsqGhqiVSCvrOK9VK5j/exec", {
+    method: "POST",
+    body: new URLSearchParams({ Name: name, Class: studentClass }),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+  })
+  .then(res => res.text())
+  .then(() => {
+    // Go to quiz
+    window.location.href = "quiz.html";
+  })
+  .catch(err => {
+    console.error(err);
+    alert("There was a problem submitting your data.");
+  });
+}
 </script>
 
 </head>
