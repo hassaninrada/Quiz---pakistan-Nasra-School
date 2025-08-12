@@ -52,7 +52,7 @@ function startQuiz() {
   localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
 
   // Send to Google Apps Script
-  fetch("https://script.google.com/macros/s/AKfycbzbt_qb8QQo_W39rFAGh3EaGEd_QzvgL4FbOwrA2D-Q50uwOL09D1PE7PwHpi6qAu0r/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzAjWkiVsaq6oweRy52FlsrlshoHByjyGiNvbyg-jvGWfxQdmsqGhqiVSCvrOK9VK5j/exec", {
     method: "POST",
     body: new URLSearchParams({ Name: name, Class: studentClass }),
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
