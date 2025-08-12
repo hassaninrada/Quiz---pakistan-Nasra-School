@@ -1,4 +1,21 @@
-
+fetch("https://script.google.com/macros/s/AKfycbz8w-wONSm0Tu2ELeETx_PQrZAxAQY_FxJT6kwBHvBYrf0C7EwpQvO1BsRm5sRzgvDV/exec", {
+  method: "POST",
+  body: new URLSearchParams(result)
+})
+.then(res => res.json())
+.then(data => {
+  if (data.result === 'success') {
+    alert(`Quiz submitted successfully! Your score: ${result.Score}/${quizData.length}`);
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 3000);
+  } else {
+    alert("Submission failed: " + data.error);
+  }
+})
+.catch(err => {
+  alert("Error submitting quiz: " + err.message);
+});
 const ctx = document.getElementById("barChart").getContext("2d");
 let chart;
 
