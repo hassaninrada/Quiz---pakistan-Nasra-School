@@ -322,7 +322,54 @@
       }
     }, 1000);
 
-  
+  function submitQuiz() {
+  const answers = [];
+  quizData.forEach((q, i) => {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    answers.push({
+      question: q.question,
+      selected: selected ? selected.value : "No Answer",
+      correct: q.answer
+    });
+  });
+
+  const score = answers.filter(a => a.selected === a.correct).length;
+
+  const result = {
+    Name: currentUser.name,
+    Class: currentUser.studentClass,
+    Time: new Date().toLocaleString(),
+    Score: score,
+    Total: quizData.length
+  };
+
+  // Save to local storage
+  const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
+  if (results.some(r => r.Name === result.Name && r.Class === result.Class)) {
+    alert("You have already submitted the quiz.");
+    return;
+  }
+
+  results.push(result);
+  localStorage.setItem("quizResults", JSON.stringify(results));
+
+  // Send to Google Sheets
+  fetch("https://script.google.com/macros/s/AKfycbz2sJxICgQUlum1y2EnqvJkQdmNTlRDbPz9gTaKNGYIQZlW5mNhs2fyomdQewjPwi_f/exec", {
+    method: "POST",
+    body: new URLSearchParams(result),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+  })
+  .then(res => res.text())
+  .then(() => {
+    alert("Quiz submitted successfully!");
+    window.location.href = "index.html";
+  })
+  .catch(err => {
+    console.error(err);
+    alert("There was a problem submitting your data.");
+  });
+}
+
 </script>
 
 
