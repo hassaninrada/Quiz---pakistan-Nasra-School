@@ -275,7 +275,7 @@ function nextQuestion(index) {
 }
 
 let timer = null;
-let duration = 10 * 60;
+let duration = 10 * 60; // 10 minutes in seconds
 const display = document.getElementById('time');
 
 function startTimer() {
@@ -296,6 +296,9 @@ function startTimer() {
 function submitQuiz() {
   clearInterval(timer); // stop timer when submitting manually
 
+  // Disable buttons to prevent double submit
+  document.querySelectorAll("button").forEach(btn => btn.disabled = true);
+
   const answers = [];
   quizData.forEach((q, i) => {
     const selected = document.querySelector(`input[name="q${i}"]:checked`);
@@ -311,38 +314,38 @@ function submitQuiz() {
   const result = {
     Name: currentUser.name,
     Class: currentUser.studentClass,
-    Score: score,
+    Score: score.toString(),  // convert to string if needed
   };
 
-  // Disable buttons to prevent double submit
-  document.querySelectorAll("button").forEach(btn => btn.disabled = true);
-
-  fetch("https://script.google.com/macros/s/AKfycbz8w-wONSm0Tu2ELeETx_PQrZAxAQY_FxJT6kwBHvBYrf0C7EwpQvO1BsRm5sRzgvDV/exec", {
+  fetch("YOUR_WEBAPP_URL_HERE", {  // replace with your actual Apps Script Web App URL
     method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
     body: new URLSearchParams(result)
   })
-  .then(res => res.json())
+  .then(response => response.json())
   .then(data => {
-    if (data.result === 'success') {
-      alert(`Quiz submitted successfully! Your score: ${result.Score}/${quizData.length}`);
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 3000);
+    if(data.result === "success") {
+      alert(`Quiz submitted successfully! Your score: ${score}/${quizData.length}`);
+      localStorage.removeItem("studentData"); // clear student data if needed
+      setTimeout(() => window.location.href = "index.html", 3000);
     } else {
-      alert("Submission failed: " + data.error);
+      alert("Submission failed: " + (data.error || "Unknown error"));
       // Re-enable buttons on failure
       document.querySelectorAll("button").forEach(btn => btn.disabled = false);
     }
   })
   .catch(err => {
     alert("Error submitting quiz: " + err.message);
-    // Re-enable buttons on failure
+    // Re-enable buttons on error
     document.querySelectorAll("button").forEach(btn => btn.disabled = false);
   });
 }
 
 // Start timer on page load
 startTimer();
+
 
   </script>
 
