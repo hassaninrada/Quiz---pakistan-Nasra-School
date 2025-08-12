@@ -81,17 +81,25 @@
     sendToSheet();
   }
 
-  function sendToSheet() {
-    const name = localStorage.getItem("studentName") || "Unknown";
-    const studentClass = localStorage.getItem("studentClass") || "Unknown";
 
-    fetch("https://script.google.com/macros/s/AKfycbyWQvzbwnrv9cgcRSEW-Nw9IYR3fUEUvEFkyfQD8yFHN0eaWK9ksDsWax9VTOjqn4cp/exec", {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name, class: studentClass, score: score })
-    });
-  }
+// Assume you saved Name and Class in localStorage from index.html
+const studentName = localStorage.getItem("studentName");
+const studentClass = localStorage.getItem("studentClass");
+const score = finalScore; // Replace with your quiz score variable
+
+fetch("https://script.google.com/macros/s/AKfycbyWQvzbwnrv9cgcRSEW-Nw9IYR3fUEUvEFkyfQD8yFHN0eaWK9ksDsWax9VTOjqn4cp/exec", {
+  method: "POST",
+  body: new URLSearchParams({
+    "Name": studentName,
+    "Class": studentClass,
+    "Score": score
+  })
+})
+.then(res => res.json())
+.then(data => {
+  console.log("Saved to Google Sheet:", data);
+})
+.catch(err => console.error("Error:", err));
 
   loadQuestion();
 </script>
