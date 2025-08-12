@@ -21,33 +21,45 @@
 <div class="container">
   <h2>Student Login</h2>
 
-  <input type="email" id="studentEmail" placeholder="Enter your Email" required>
+  <!-- Class Dropdown -->
+  <select id="studentClass" required>
+    <option value="">Select Your Class</option>
+    <option value="6">Class 6</option>
+    <option value="7">Class 7</option>
+    <option value="8">Class 8</option>
+    <option value="9">Class 9</option>
+    <option value="10">Class 10</option>
+  </select>
+
+  <!-- Name Input -->
   <input type="text" id="studentName" placeholder="Enter your Name" required>
+
+  <!-- Start Quiz Button -->
   <button onclick="startQuiz()">Start Quiz</button>
 </div>
 
 <script>
 function startQuiz() {
-  const email = document.getElementById('studentEmail').value.trim();
+  const studentClass = document.getElementById('studentClass').value.trim();
   const name = document.getElementById('studentName').value.trim();
 
-  if (!email || !name) {
-    alert("Please enter your Email and Name.");
+  if (!studentClass || !name) {
+    alert("Please select your Class and enter your Name.");
     return;
   }
 
-  // Save locally for quiz.html use
-  localStorage.setItem("studentData", JSON.stringify({ email, name }));
+  // Save locally for quiz.html
+  localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
 
-  // Send to Google Apps Script (or backend)
+  // Send to Google Apps Script
   fetch("https://script.google.com/macros/s/AKfycbyTXX9OXPX5j3rz7oSIisSbHu2dwwwXMSJk7aNQXAzltSNi4a16ayw4LK2QQzJuHbpR/exec", {
     method: "POST",
-    body: new URLSearchParams({ Email: email, Name: name }),
+    body: new URLSearchParams({ Name: name, Class: studentClass }),
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
   .then(res => res.text())
   .then(() => {
-    // Redirect to quiz
+    // Go to quiz
     window.location.href = "quiz.html";
   })
   .catch(err => {
@@ -59,3 +71,4 @@ function startQuiz() {
 
 </body>
 </html>
+
