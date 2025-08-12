@@ -1,12 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Results</title>
   <link rel="stylesheet" href="style.css">
+</head>
 <body class="result-page">
-  <!-- Nasra School Logo (Top-Left) -->
+
+<!-- Nasra School Logo (Top-Left) -->
 <div class="nasra-logo">
   <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo">
 </div>
@@ -16,77 +17,57 @@
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
 </div>
 
-  <div class="container">
-    <h2>Quiz Results</h2>
-    <select id="classFilter" onchange="filterResults()">
-      <option value="all">All Classes</option>
-      <option value="6">Class 6</option>
-      <option value="7">Class 7</option>
-      <option value="8">Class 8</option>
-      <option value="9">Class 9</option>
-      <option value="10">Class 10</option>
-    </select>
-    <canvas id="barChart"></canvas>
-    <button onclick="downloadCSV()">Download CSV</button>
-    <button onclick="confirmDeleteAll()">Delete All</button>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="result.js"></script>
-  <script>
-  function saveScore(score) {
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzAjWkiVsaq6oweRy52FlsrlshoHByjyGiNvbyg-jvGWfxQdmsqGhqiVSCvrOK9VK5j/exec"; // Replace with your Apps Script deployed URL
+<div class="container">
+  <h2>Quiz Results</h2>
+  <select id="classFilter" onchange="filterResults()">
+    <option value="all">All Classes</option>
+    <option value="6">Class 6</option>
+    <option value="7">Class 7</option>
+    <option value="8">Class 8</option>
+    <option value="9">Class 9</option>
+    <option value="10">Class 10</option>
+  </select>
+  <canvas id="barChart"></canvas>
+  <button onclick="downloadCSV()">Download CSV</button>
+  <button onclick="confirmDeleteAll()">Delete All</button>
+</div>
 
-    const data = {
-      Score: score,
-      Date: new Date().toISOString()
-    };
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="result.js"></script>
 
-    fetch(scriptURL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: new URLSearchParams(data)
-    })
-    .then(() => {
-      console.log("Score submitted successfully");
-    })
-    .catch(error => {
-      console.error("Error submitting score:", error);
-    });
-  }
+<script>
+function saveScore(score) {
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwnWWWX-XVnsHs-GPFdoLsDaVYCRzQak6BKBSWn3eibl1N21bO-t8HCIcI95iRnlHMV/exec";
 
-function startQuiz() {
-  const studentClass = document.getElementById('studentClass').value.trim();
-  const name = document.getElementById('studentName').value.trim();
-
-  if (!studentClass || !name) {
-    alert("Please select your Class and enter your Name.");
+  // Get saved login data
+  const studentData = JSON.parse(localStorage.getItem("studentData") || "{}");
+  if (!studentData.name || !studentData.studentClass) {
+    alert("Student information missing — please log in first.");
     return;
   }
 
-  // Save locally for quiz.html
-  localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
-
-  // Send to Google Apps Script
-  fetch("https://script.google.com/macros/s/AKfycbzAjWkiVsaq6oweRy52FlsrlshoHByjyGiNvbyg-jvGWfxQdmsqGhqiVSCvrOK9VK5j/exec", {
+  // Send to Google Sheet
+  fetch(scriptURL, {
     method: "POST",
-    body: new URLSearchParams({ Name: name, Class: studentClass }),
+    body: new URLSearchParams({
+      Name: studentData.name,
+      Class: studentData.studentClass,
+      Score: score,
+      Date: new Date().toISOString()
+    }),
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
-  .then(res => res.text())
   .then(() => {
-    // Go to quiz
-    window.location.href = "quiz.html";
+    console.log("Score submitted successfully");
   })
-  .catch(err => {
-    console.error(err);
-    alert("There was a problem submitting your data.");
+  .catch(error => {
+    console.error("Error submitting score:", error);
   });
 }
+
+// Example: call this when the quiz ends
+// saveScore(finalScore);
 </script>
 
-</head>
 </body>
 </html>
