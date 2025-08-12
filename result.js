@@ -2,6 +2,7 @@
 const ctx = document.getElementById("barChart").getContext("2d");
 let chart;
 
+// Filter results based on selected class
 function filterResults() {
   const filter = document.getElementById("classFilter").value;
   const allResults = JSON.parse(localStorage.getItem("quizResults") || "[]");
@@ -9,6 +10,7 @@ function filterResults() {
   renderChart(filtered);
 }
 
+// Render bar chart of quiz results
 function renderChart(results) {
   const labels = results.map(r => r.name);
   const scores = results.map(r => r.score);
@@ -18,11 +20,24 @@ function renderChart(results) {
     type: "bar",
     data: {
       labels: labels,
-      datasets: [{ label: "Score", data: scores }]
+      datasets: [{
+        label: "Score",
+        data: scores,
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
     }
   });
 }
 
+// Download results as CSV
 function downloadCSV() {
   const data = JSON.parse(localStorage.getItem("quizResults") || "[]");
   let csv = "Name,Class,Score,Total,Time\n";
@@ -37,6 +52,7 @@ function downloadCSV() {
   a.click();
 }
 
+// Delete all results
 function confirmDeleteAll() {
   if (confirm("Are you sure you want to delete ALL results?")) {
     localStorage.removeItem("quizResults");
@@ -44,4 +60,6 @@ function confirmDeleteAll() {
   }
 }
 
+// Run filter when page loads
 filterResults();
+
