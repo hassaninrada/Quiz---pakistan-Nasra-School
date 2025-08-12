@@ -245,6 +245,7 @@
         "answer": "B) Lahore"
       }
     ];
+<script>
 let currentUser = JSON.parse(localStorage.getItem("studentData"));
 if (!currentUser) window.location.href = "index.html";
 
@@ -287,18 +288,14 @@ function submitQuiz() {
   const score = answers.filter(a => a.selected === a.correct).length;
 
   const result = {
-    Name: currentUser.name,
-    Class: currentUser.studentClass,
+    Name: currentUser.name || "",
+    Class: currentUser.studentClass || "",
     Score: score,
     Time: new Date().toLocaleString()
   };
 
-  // Save locally
+  // Save locally (but do NOT block sending to Google Sheets)
   const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
-  if (results.some(r => r.Name === result.Name && r.Class === result.Class)) {
-    alert("You have already submitted the quiz.");
-    return;
-  }
   results.push(result);
   localStorage.setItem("quizResults", JSON.stringify(results));
 
@@ -334,6 +331,8 @@ const timer = setInterval(() => {
     submitQuiz();
   }
 }, 1000);
+</script>
+
 
 </script>
 
