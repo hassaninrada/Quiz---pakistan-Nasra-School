@@ -5,28 +5,6 @@
   <meta charset="UTF-8">
   <title>Results</title>
   <link rel="stylesheet" href="style.css">
-
-<!-- Firebase App (the core Firebase SDK) -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-<script>
-  // Your Firebase configuration
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
-
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-</script>
-
-</head>
 <body class="result-page">
   <!-- Nasra School Logo (Top-Left) -->
 <div class="nasra-logo">
@@ -54,5 +32,35 @@
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="result.js"></script>
+  <script>
+  function saveScore(score) {
+    const scriptURL = "https://script.google.com/macros/s/AKfycbzAjWkiVsaq6oweRy52FlsrlshoHByjyGiNvbyg-jvGWfxQdmsqGhqiVSCvrOK9VK5j/exec"; // Replace with your Apps Script deployed URL
+
+    const data = {
+      Score: score,
+      Date: new Date().toISOString()
+    };
+
+    fetch(scriptURL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams(data)
+    })
+    .then(() => {
+      console.log("Score submitted successfully");
+    })
+    .catch(error => {
+      console.error("Error submitting score:", error);
+    });
+  }
+
+  // Example: call this when quiz ends
+  // saveScore(8); // if the user scored 8
+</script>
+
+</head>
 </body>
 </html>
