@@ -1,312 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Quiz</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .quiz-container {
-      max-width: 600px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-    }
-
-    .question-card {
-      display: none;
-    }
-
-    .question-card.active {
-      display: block;
-    }
-
-    h4 {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      padding: 10px;
-      background: #f1f1f1;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    input[type="radio"] {
-      margin-right: 10px;
-    }
-
-    .btn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #28a745;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .btn:disabled {
-      background: #aaa;
-      cursor: not-allowed;
-    }
-
-    .btn-next {
-      float: right;
-    }
-
-    .btn-submit {
-      background: #007bff;
-      float: right;
-    }
-
-    .clearfix::after {
-      content: "";
-      display: block;
-      clear: both;
-    }
-
-    #quiz-timer {
-      font-size: 20px;
-      font-weight: bold;
-      color: red;
-      text-align: right;
-      margin-bottom: 20px;
-    }
+    body { font-family: Arial; }
+    .quiz-container { max-width: 600px; margin: auto; }
+    .question { font-size: 18px; margin-bottom: 10px; }
+    .option { display: block; margin: 5px 0; }
+    #result { font-size: 20px; font-weight: bold; margin-top: 20px; }
   </style>
-
-
 </head>
 <body>
-<div id="quiz-timer">Time Left: <span id="time">10:00</span></div>
 
-<div class="quiz-container" id="quizContainer">
-  <!-- Questions will appear here -->
+<div class="quiz-container">
+  <h2>Quiz</h2>
+  <div id="quizContent"></div>
+  <button id="nextBtn" onclick="nextQuestion()">Next</button>
+  <div id="result"></div>
 </div>
 
-<!-- Result Section (hidden until quiz ends) -->
-<div id="resultContainer" style="display:none; margin-top:20px;">
-  <p>Name: <span id="studentNameDisplay"></span></p>
-  <p>Class: <span id="studentClassDisplay"></span></p>
-  <p>Your score: <span id="scoreDisplay"></span></p>
-</div>
+<script>
+  const questions = [
+    {
+      q: "What is the capital of Pakistan?",
+      options: ["Karachi", "Islamabad", "Lahore", "Quetta"],
+      answer: 1
+    },
+    {
+      q: "2 + 2 = ?",
+      options: ["3", "4", "5", "6"],
+      answer: 1
+    },
+    {
+      q: "Which is the largest ocean?",
+      options: ["Atlantic", "Pacific", "Indian", "Arctic"],
+      answer: 1
+    }
+  ];
 
+  let currentQ = 0;
+  let score = 0;
+  let selected = null;
 
-  <script>
-let studentName = localStorage.getItem('studentName'); // from index.html
-    let studentClass = localStorage.getItem('studentClass'); // from index.html
-    let score = 0;
+  const quizContent = document.getElementById("quizContent");
+  const nextBtn = document.getElementById("nextBtn");
+  const resultDiv = document.getElementById("result");
 
-    document.getElementById('studentNameDisplay').textContent = studentName;
-    document.getElementById('studentClassDisplay').textContent = studentClass;
+  function loadQuestion() {
+    if (currentQ < questions.length) {
+      const qObj = questions[currentQ];
+      let html = `<div class='question'>${qObj.q}</div>`;
+      qObj.options.forEach((opt, i) => {
+        html += `<label class='option'><input type='radio' name='option' value='${i}'> ${opt}</label>`;
+      });
+      quizContent.innerHTML = html;
+    } else {
+      showResult();
+    }
+  }
 
-    // Example questions
-    let questions = [
-      {
-        "question": "When did Pakistan gain independence?",
-        "options": ["A) 15th August 1947", "B) 14th August 1947", "C) 26th January 1950", "D) 23rd March 1940"],
-        "answer": "B) 14th August 1947"
-      },
-      {
-        "question": "Which event does Pakistan's Independence Day commemorate?",
-        "options": ["A) Adoption of the Constitution", "B) Formation of the Muslim League", "C) End of British colonial rule", "D) Declaration of Republic"],
-        "answer": "C) End of British colonial rule"
-      },
-      {
-        "question": "Who is known as the 'Father of the Nation' in Pakistan?",
-        "options": ["A) Allama Iqbal", "B) Liaquat Ali Khan", "C) Muhammad Ali Jinnah", "D) Chaudhry Rehmat Ali"],
-        "answer": "C) Muhammad Ali Jinnah"
-      },
-      {
-        "question": "Who proposed the name 'Pakistan'?",
-        "options": ["A) Allama Iqbal", "B) Chaudhry Rehmat Ali", "C) Liaquat Ali Khan", "D) Sir Syed Ahmed Khan"],
-        "answer": "B) Chaudhry Rehmat Ali"
-      },
-      {
-        "question": "When was the Lahore Resolution passed?",
-        "options": ["A) 23rd March 1940", "B) 14th August 1947", "C) 26th January 1950", "D) 11th September 1948"],
-        "answer": "A) 23rd March 1940"
-      },
-      {
-        "question": "Which organization led the Pakistan Movement?",
-        "options": ["A) Indian National Congress", "B) All-India Muslim League", "C) Khilafat Movement", "D) None of the above"],
-        "answer": "B) All-India Muslim League"
-      },
-      {
-        "question": "What is the national language of Pakistan?",
-        "options": ["A) Punjabi", "B) Urdu", "C) Sindhi", "D) English"],
-        "answer": "B) Urdu"
-      },
-      {
-        "question": "Which is the highest military award in Pakistan?",
-        "options": ["A) Nishan-e-Haider", "B) Sitara-e-Jurat", "C) Tamgha-e-Imtiaz", "D) Hilal-e-Imtiaz"],
-        "answer": "A) Nishan-e-Haider"
-      },
-      {
-        "question": "What is the national flower of Pakistan?",
-        "options": ["A) Rose", "B) Jasmine", "C) Sunflower", "D) Lily"],
-        "answer": "B) Jasmine"
-      },
-       {
-        "question": "What is the capital of Karachi?",
-        "options": ["A)Sindh ", "B) Islamabad", "C) Lahore", "D) Peshwar"],
-        "answer": "B) Islamabad"
-      },
-      {
-        "question": "Which bird is the national bird of Pakistan?",
-        "options": ["A) Peacock", "B) Chukar Partridge", "C) Sparrow", "D) Eagle"],
-        "answer": "B) Chukar Partridge"
-      },
-      {
-        "question": "Which province is known for its vibrant Sindhi culture?",
-        "options": ["A) Punjab", "B) Sindh", "C) Balochistan", "D) Khyber Pakhtunkhwa"],
-        "answer": "B) Sindh"
-      },
-      {
-        "question": "Which festival is celebrated by the Kalash people?",
-        "options": ["A) Basant", "B) Chilam Joshi", "C) Eid-ul-Fitr", "D) Nowruz"],
-        "answer": "B) Chilam Joshi"
-      },
-      {
-        "question": "Which language is predominantly spoken in Balochistan?",
-        "options": ["A) Pashto", "B) Balochi", "C) Sindhi", "D) Punjabi"],
-        "answer": "B) Balochi"
-      },
-      {
-        "question": "What is the official language used in Pakistan's legal system?",
-        "options": ["A) Urdu", "B) English", "C) Punjabi", "D) Pashto"],
-        "answer": "B) English"
-      },
-      {
-        "question": "Which city is known as the cultural capital of Pakistan?",
-        "options": ["A) Islamabad", "B) Lahore", "C) Karachi", "D) Peshawar"],
-        "answer": "B) Lahore"
-      },
-      {
-        "question": "Which language is primarily spoken in the province of Sindh?",
-        "options": ["A) Punjabi", "B) Pashto", "C) Sindhi", "D) Balochi"],
-        "answer": "C) Sindhi"
-      },
-      {
-        "question": "Who was the first female Prime Minister of Pakistan?",
-        "options": ["A) Fatima Jinnah", "B) Benazir Bhutto", "C) Hina Rabbani Khar", "D) Malala Yousafzai"],
-        "answer": "B) Benazir Bhutto"
-      },
-      {
-        "question": "Which mountain range is located in the northern part of Pakistan?",
-        "options": ["A) Alps", "B) Himalayas", "C) Andes", "D) Rockies"],
-        "answer": "B) Himalayas"
-      },
-      {
-        "question": "What is the national sport of Pakistan?",
-        "options": ["A) Cricket", "B) Hockey", "C) Football", "D) Squash"],
-        "answer": "B) Hockey"
-      },
-      {
-        "question": "Which river is the longest in Pakistan?",
-        "options": ["A) Jhelum", "B) Chenab", "C) Indus", "D) Ravi"],
-        "answer": "C) Indus"
-      },
-      {
-        "question": "Which province is the largest by area in Pakistan?",
-        "options": ["A) Punjab", "B) Sindh", "C) Khyber Pakhtunkhwa", "D) Balochistan"],
-        "answer": "D) Balochistan"
-      },
-      {
-        "question": "Who composed the music for Pakistan's national anthem?",
-        "options": ["A) Nisar Bazmi", "B) Sohail Rana", "C) Ahmad G. Chagla", "D) Nusrat Fateh Ali Khan"],
-        "answer": "C) Ahmad G. Chagla"
-      },
-      {
-        "question": "Which city is known as the 'City of Lights' in Pakistan?",
-        "options": ["A) Lahore", "B) Islamabad", "C) Karachi", "D) Quetta"],
-        "answer": "C) Karachi"
-      },
-      {
-        "question": "What is the national animal of Pakistan?",
-        "options": ["A) Markhor", "B) Lion", "C) Tiger", "D) Elephant"],
-        "answer": "A) Markhor"
-      },
-      {
-        "question": "Which Pakistani scientist won the Nobel Prize in Physics in 1979?",
-        "options": ["A) Dr. Abdul Qadeer Khan", "B) Dr. Atta-ur-Rahman", "C) Dr. Abdus Salam", "D) Dr. Samar Mubarakmand"],
-        "answer": "C) Dr. Abdus Salam"
-      },
-      {
-        "question": "Which city is famous for producing sports goods in Pakistan?",
-        "options": ["A) Sialkot", "B) Gujranwala", "C) Faisalabad", "D) Multan"],
-        "answer": "A) Sialkot"
-      },
-      {
-        "question": "Which Pakistani woman won the Nobel Peace Prize in 2014?",
-        "options": ["A) Sharmeen Obaid-Chinoy", "B) Malala Yousafzai", "C) Benazir Bhutto", "D) Asma Jahangir"],
-        "answer": "B) Malala Yousafzai"
-      },
-      {
-        "question": "Which desert is located in the southeastern part of Pakistan?",
-        "options": ["A) Thar Desert", "B) Sahara Desert", "C) Gobi Desert", "D) Kalahari Desert"],
-        "answer": "A) Thar Desert"
-      },
-      {
-        "question": "Which Pakistani city is known for its historical Mughal architecture?",
-        "options": ["A) Islamabad", "B) Lahore", "C) Peshawar", "D) Rawalpindi"],
-        "answer": "B) Lahore"
-      }
-    ];
-
-    let currentQuestion = 0;
-
-    function loadQuestion() {
-      let container = document.getElementById('quiz-container');
-      let q = questions[currentQuestion];
-      container.innerHTML = `<h3>${q.q}</h3>` +
-        q.options.map((opt, i) => 
-          `<button onclick="checkAnswer(${i})">${opt}</button>`
-        ).join('<br>');
+  function nextQuestion() {
+    const selectedOption = document.querySelector("input[name='option']:checked");
+    if (!selectedOption) {
+      alert("Please select an answer!");
+      return;
     }
 
-    function checkAnswer(selected) {
-      if (selected === questions[currentQuestion].answer) {
-        score++;
-      }
-      currentQuestion++;
-      if (currentQuestion < questions.length) {
-        loadQuestion();
-      } else {
-        endQuiz();
-      }
+    if (parseInt(selectedOption.value) === questions[currentQ].answer) {
+      score++;
     }
 
-    function endQuiz() {
-      document.getElementById('quiz-container').style.display = "none";
-      document.getElementById('result-container').style.display = "block";
-      document.getElementById('score').textContent = score;
-      sendToSheet();
-    }
-
-    function sendToSheet() {
-      fetch("https://script.google.com/macros/s/AKfycbzYsiow_9gpRwmLWNG9cq51DS1iRMBj3Mleqbk2iay3S9P4RVLbYcLD8GXPE4Xr6cc1/exec", {
-        method: "POST",
-        body: new URLSearchParams({
-          Name: studentName,
-          Class: studentClass,
-          Score: score
-        })
-      })
-      .then(res => res.text())
-      .then(txt => console.log(txt))
-      .catch(err => console.error(err));
-    }
-
+    currentQ++;
     loadQuestion();
+  }
+
+  function showResult() {
+    quizContent.innerHTML = "";
+    nextBtn.style.display = "none";
+    resultDiv.innerHTML = `Your Score: ${score}/${questions.length}`;
+    sendToSheet();
+  }
+
+  function sendToSheet() {
+    const name = localStorage.getItem("studentName") || "Unknown";
+    const studentClass = localStorage.getItem("studentClass") || "Unknown";
+
+    fetch("https://script.google.com/macros/s/AKfycbyWQvzbwnrv9cgcRSEW-Nw9IYR3fUEUvEFkyfQD8yFHN0eaWK9ksDsWax9VTOjqn4cp/exec", {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name, class: studentClass, score: score })
+    });
+  }
+
+  loadQuestion();
+</script>
+
 </body>
 </html>
