@@ -1,179 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Live Quiz Results (Pakistan Quiz)</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  body { font-family: Arial, sans-serif; background:#f4f7fb; margin:20px; color:#222; }
-  .wrap { max-width:1100px; margin:0 auto; }
-  .top { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
-  h1 { margin:0; font-size:20px; }
-  select, button { padding:8px 10px; border-radius:6px; border:1px solid #ccc; background:white; }
-  .card { background:white; padding:14px; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,0.06); margin-top:14px; }
-  canvas { width:100% !important; height:420px !important; }
-  table { width:100%; border-collapse:collapse; margin-top:12px; }
-  th, td { padding:8px 10px; border:1px solid #eee; text-align:center; }
-  th { background:#007bff; color:white; }
-  .muted { color:#666; font-size:13px; }
-  .danger { background:#ff4d4d; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; }
-</style>
+  <meta charset="UTF-8">
+  <title>Results</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<div class="wrap">
-  <div class="top">
-    <div>
-      <h1>🇵🇰 Pakistan Quiz — Live Results</h1>
-      <div class="muted">Chart shows score (out of total). Delete removes the row from the sheet.</div>
-    </div>
-
-    <div>
-      <label for="classFilter">Filter:</label>
-      <select id="classFilter"><option value="all">All Classes</option></select>
-      <button id="refreshBtn">Refresh</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <canvas id="barChart"></canvas>
-  </div>
-
-  <div class="card" id="tableCard">
-    <h3 style="margin:0 0 8px 0;">Results</h3>
-    <div id="tableContainer">Loading…</div>
-  </div>
+<body class="result-page">
+  <!-- Nasra School Logo (Top-Left) -->
+<div class="nasra-logo">
+  <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo">
 </div>
 
-<script>
-/* CONFIG — replace this with your own Web App URL */
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxY_itk-lH476-4JMc-Lh2yY0lPtKx5iWHr7Nv0coiFEbsO_y0_-OrWyinEpoPSkSDe/exec"; // deployed Apps Script web app link
-const SECRET_TOKEN = "pkquiz2025"; // must match Apps Script code
-const QUIZ_TOTAL = 30; // change if needed
+<!-- Pakistan Flag (Top-Right) -->
+<div class="pakistan-flag">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
+</div>
 
-const classFilter = document.getElementById("classFilter");
-const refreshBtn = document.getElementById("refreshBtn");
-const tableContainer = document.getElementById("tableContainer");
-const ctx = document.getElementById("barChart").getContext("2d");
-let chart = null;
-let rows = [];
-
-refreshBtn.addEventListener("click", () => fetchAndRender());
-classFilter.addEventListener("change", () => applyFilterAndRender());
-
-async function fetchAndRender(){
-  try {
-    const res = await fetch(WEB_APP_URL);
-    const data = await res.json();
-    if (!data || data.status !== "ok") throw new Error("Bad response from server");
-    rows = data.rows.map(r => ({
-      __row: r.__row,
-      Timestamp: r.Timestamp || r.Date || "",
-      Name: r.Name || "",
-      Class: r.Class || "",
-      Score: Number(r.Score || 0),
-      Total: Number(r.Total || QUIZ_TOTAL),
-      TimeTaken: r["Time Taken"] || ""
-    }));
-
-    populateClassDropdown();
-    applyFilterAndRender();
-  } catch (err) {
-    console.error(err);
-    tableContainer.innerHTML = "<div style='color:#b00'>Error fetching data. Check Apps Script deploy and WEB_APP_URL.</div>";
-  }
-}
-
-function populateClassDropdown(){
-  const set = new Set(rows.map(r => r.Class).filter(v => v));
-  classFilter.innerHTML = ["<option value='all'>All Classes</option>", ...Array.from(set).map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)].join("");
-}
-
-function applyFilterAndRender(){
-  const filter = classFilter.value || "all";
-  const filtered = filter === "all" ? rows : rows.filter(r => r.Class === filter);
-  renderChart(filtered);
-  renderTable(filtered);
-}
-
-function renderChart(data){
-  const labels = data.map(r => r.Name || ("Row " + r.__row));
-  const scores = data.map(r => Math.max(0, Number(r.Score || 0)));
-  const totals = data.map(r => Number(r.Total || QUIZ_TOTAL));
-  const maxTotal = Math.max(...totals, QUIZ_TOTAL);
-
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [{
-        label: "Score (out of " + maxTotal + ")",
-        data: scores,
-        backgroundColor: "rgba(54,162,235,0.7)",
-        borderColor: "rgba(54,162,235,1)",
-        borderWidth:1
-      }]
-    },
-    options: {
-      maintainAspectRatio: false,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: ctx => `${scores[ctx.dataIndex]}/${totals[ctx.dataIndex] || maxTotal}`
-          }
-        },
-        legend: { display: false }
-      },
-      scales: { y: { beginAtZero: true, max: maxTotal, ticks: { stepSize: 1 } } }
-    }
-  });
-}
-
-function renderTable(data){
-  if (!data.length) { tableContainer.innerHTML = "<div class='muted'>No results.</div>"; return; }
-  let html = `<table><thead><tr><th>Timestamp</th><th>Name</th><th>Class</th><th>Score</th><th>Time</th><th>Action</th></tr></thead><tbody>`;
-  data.forEach(r => {
-    html += `<tr>
-      <td>${escapeHtml(r.Timestamp)}</td>
-      <td>${escapeHtml(r.Name)}</td>
-      <td>${escapeHtml(r.Class)}</td>
-      <td>${r.Score}/${r.Total}</td>
-      <td>${escapeHtml(r.TimeTaken)}</td>
-      <td><button class="danger" onclick="deleteRow(${r.__row})">Delete</button></td>
-    </tr>`;
-  });
-  html += `</tbody></table>`;
-  tableContainer.innerHTML = html;
-}
-
-async function deleteRow(rowNumber){
-  if (!confirm("Delete this result from the sheet?")) return;
-  try {
-    const payload = { action: "delete", row: rowNumber, token: SECRET_TOKEN };
-    const res = await fetch(WEB_APP_URL, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" }
-    });
-    const data = await res.json();
-    if (data && data.status === "ok") {
-      alert("Deleted row " + rowNumber);
-      fetchAndRender();
-    } else {
-      alert("Delete failed: " + (data.message || "unknown"));
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Delete request failed — see console.");
-  }
-}
-
-function escapeHtml(s){ return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-
-// initial load & auto-refresh
-fetchAndRender();
-setInterval(fetchAndRender, 30000);
-</script>
+  <div class="container">
+    <h2>Quiz Results</h2>
+    <select id="classFilter" onchange="filterResults()">
+      <option value="all">All Classes</option>
+      <option value="6">Class 6</option>
+      <option value="7">Class 7</option>
+      <option value="8">Class 8</option>
+      <option value="9">Class 9</option>
+      <option value="10">Class 10</option>
+    </select>
+    <canvas id="barChart"></canvas>
+    <button onclick="downloadCSV()">Download CSV</button>
+    <button onclick="confirmDeleteAll()">Delete All</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="result.js"></script>
+   
 </body>
 </html>
+
