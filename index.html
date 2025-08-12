@@ -21,13 +21,41 @@
 <div class="container">
   <h2>Student Login</h2>
 
-  <!-- Replace your old inputs with form POST -->
-  <form method="POST" action="https://script.google.com/macros/s/AKfycbyVrP9VTKxVztAGoAamF3WZ4kN0yh5e3RKLyP4eccTdSanVAMX9lYoUX5IZQAoY-kYI/exec">
-    <input name="Class" type="text" placeholder="Enter your Class" required>
-    <input name="Name" type="text" placeholder="Enter your Name" required>
-    <button type="submit">Start Quiz</button>
-  </form>
+  <input type="email" id="studentEmail" placeholder="Enter your Email" required>
+  <input type="text" id="studentName" placeholder="Enter your Name" required>
+  <button onclick="startQuiz()">Start Quiz</button>
 </div>
+
+<script>
+function startQuiz() {
+  const email = document.getElementById('studentEmail').value.trim();
+  const name = document.getElementById('studentName').value.trim();
+
+  if (!email || !name) {
+    alert("Please enter your Email and Name.");
+    return;
+  }
+
+  // Save locally for quiz.html use
+  localStorage.setItem("studentData", JSON.stringify({ email, name }));
+
+  // Send to Google Apps Script (or backend)
+  fetch("https://script.google.com/macros/s/AKfycbyTXX9OXPX5j3rz7oSIisSbHu2dwwwXMSJk7aNQXAzltSNi4a16ayw4LK2QQzJuHbpR/exec", {
+    method: "POST",
+    body: new URLSearchParams({ Email: email, Name: name }),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" }
+  })
+  .then(res => res.text())
+  .then(() => {
+    // Redirect to quiz
+    window.location.href = "quiz.html";
+  })
+  .catch(err => {
+    console.error(err);
+    alert("There was a problem submitting your data.");
+  });
+}
+</script>
 
 </body>
 </html>
