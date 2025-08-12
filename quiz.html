@@ -246,83 +246,35 @@
       }
     ];
 
-    let currentUser  = JSON.parse(localStorage.getItem("studentData"));
-    if (!currentUser ) window.location.href = "index.html";
+   let currentUser = JSON.parse(localStorage.getItem("studentData"));
+if (!currentUser) window.location.href = "index.html";
 
-    const quizContainer = document.getElementById("quizContainer");
+const quizContainer = document.getElementById("quizContainer");
 
-    quizData.forEach((q, index) => {
-      const div = document.createElement("div");
-      div.className = `question-card ${index === 0 ? 'active' : ''}`;
-      div.id = `question-${index}`;
-      div.innerHTML = `
-        <h4>Q${index + 1}: ${q.question}</h4>
-        ${q.options.map(opt => `
-          <label><input type="radio" name="q${index}" value="${opt}"/> ${opt}</label>
-        `).join("")}
-        <div class="clearfix">
-          ${index < quizData.length - 1
-            ? `<button class="btn btn-next" onclick="nextQuestion(${index})">Next</button>`
-            : `<button class="btn btn-submit" onclick="submitQuiz()">Submit</button>`}
-        </div>
-      `;
-      quizContainer.appendChild(div);
-    });
+quizData.forEach((q, index) => {
+  const div = document.createElement("div");
+  div.className = `question-card ${index === 0 ? 'active' : ''}`;
+  div.id = `question-${index}`;
+  div.innerHTML = `
+    <h4>Q${index + 1}: ${q.question}</h4>
+    ${q.options.map(opt => `
+      <label><input type="radio" name="q${index}" value="${opt}"/> ${opt}</label>
+    `).join("")}
+    <div class="clearfix">
+      ${index < quizData.length - 1
+        ? `<button class="btn btn-next" onclick="nextQuestion(${index})">Next</button>`
+        : `<button class="btn btn-submit" onclick="submitQuiz()">Submit</button>`}
+    </div>
+  `;
+  quizContainer.appendChild(div);
+});
 
-    function nextQuestion(index) {
-      document.getElementById(`question-${index}`).classList.remove("active");
-      document.getElementById(`question-${index + 1}`).classList.add("active");
-    }
+function nextQuestion(index) {
+  document.getElementById(`question-${index}`).classList.remove("active");
+  document.getElementById(`question-${index + 1}`).classList.add("active");
+}
 
-    function submitQuiz() {
-      const answers = [];
-      quizData.forEach((q, i) => {
-        const selected = document.querySelector(`input[name="q${i}"]:checked`);
-        answers.push({
-          question: q.question,
-          selected: selected ? selected.value : "No Answer",
-          correct: q.answer
-        });
-      });
-
-      const result = {
-        name: currentUser .name,
-        class: currentUser .studentClass,
-        time: new Date().toLocaleString(),
-        score: answers.filter(a => a.selected === a.correct).length,
-        total: quizData.length,
-        answers
-      };
-
-      const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
-      if (results.some(r => r.name === result.name && r.class === result.class)) {
-        alert("You have already submitted the quiz.");
-        return;
-      }
-
-      results.push(result);
-      localStorage.setItem("quizResults", JSON.stringify(results));
-   
-      window.location.href = "index.html";
-    }
-   
-    let duration = 10 * 60; 
-    let display = document.getElementById('time');
-
-    const timer = setInterval(() => {
-      let minutes = Math.floor(duration / 60);
-      let seconds = duration % 60;
-
-      display.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-      if (--duration < 0) {
-        clearInterval(timer);
-        alert("Time's up! Submitting your quiz.");
-        submitQuiz(); // Automatically submit the quiz when time is up
-      }
-    }, 1000);
-
-  function submitQuiz() {
+function submitQuiz() {
   const answers = [];
   quizData.forEach((q, i) => {
     const selected = document.querySelector(`input[name="q${i}"]:checked`);
@@ -349,7 +301,6 @@
     alert("You have already submitted the quiz.");
     return;
   }
-
   results.push(result);
   localStorage.setItem("quizResults", JSON.stringify(results));
 
@@ -369,6 +320,20 @@
     alert("There was a problem submitting your data.");
   });
 }
+
+// Timer
+let duration = 10 * 60;
+let display = document.getElementById('time');
+const timer = setInterval(() => {
+  let minutes = Math.floor(duration / 60);
+  let seconds = duration % 60;
+  display.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  if (--duration < 0) {
+    clearInterval(timer);
+    alert("Time's up! Submitting your quiz.");
+    submitQuiz();
+  }
+}, 1000);
 
 </script>
 
