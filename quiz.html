@@ -1,61 +1,187 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Quiz</title>
-  <style>
-    body { font-family: Arial; }
-    .quiz-container { max-width: 600px; margin: auto; }
-    .question { font-size: 18px; margin-bottom: 10px; }
-    .option { display: block; margin: 5px 0; }
-    #result { font-size: 20px; font-weight: bold; margin-top: 20px; }
-  </style>
+<meta charset="UTF-8" />
+<title>Quiz with Timer</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .quiz-container {
+    background: white;
+    max-width: 600px;
+    width: 100%;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    position: relative;
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+  }
+  #timer {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-weight: 700;
+    color: #d9534f;
+    font-size: 18px;
+  }
+  #question-count {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #555;
+  }
+  .question {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #222;
+  }
+  .option {
+    display: block;
+    background: #f9f9f9;
+    padding: 12px 15px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.3s;
+    user-select: none;
+  }
+  .option:hover {
+    border-color: #007BFF;
+    background: #e7f0fe;
+  }
+  input[type="radio"] {
+    margin-right: 12px;
+    transform: scale(1.2);
+    cursor: pointer;
+  }
+  #nextBtn, #submitBtn {
+    margin-top: 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    float: right;
+    transition: background-color 0.3s;
+  }
+  #nextBtn:disabled, #submitBtn:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
+  #nextBtn:hover:not(:disabled), #submitBtn:hover:not(:disabled) {
+    background-color: #0056b3;
+  }
+  #result {
+    font-size: 22px;
+    font-weight: 600;
+    color: #28a745;
+    margin-top: 40px;
+    text-align: center;
+    clear: both;
+  }
+  .clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
+  }
+</style>
 </head>
 <body>
 
 <div class="quiz-container">
   <h2>Quiz</h2>
+  <div id="timer">Time Left: 10:00</div>
+  <div id="question-count"></div>
   <div id="quizContent"></div>
-  <button id="nextBtn" onclick="nextQuestion()">Next</button>
+  <div class="clearfix">
+    <button id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
+    <button id="submitBtn" onclick="submitQuiz()" disabled style="display:none;">Submit</button>
+  </div>
   <div id="result"></div>
 </div>
 
 <script>
   const questions = [
-    {
-      q: "What is the capital of Pakistan?",
-      options: ["Karachi", "Islamabad", "Lahore", "Quetta"],
-      answer: 1
-    },
-    {
-      q: "2 + 2 = ?",
-      options: ["3", "4", "5", "6"],
-      answer: 1
-    },
-    {
-      q: "Which is the largest ocean?",
-      options: ["Atlantic", "Pacific", "Indian", "Arctic"],
-      answer: 1
-    }
+    { q: "What is the capital of Pakistan?", options: ["Karachi", "Islamabad", "Lahore", "Quetta"], answer: 1 },
+    { q: "2 + 2 = ?", options: ["3", "4", "5", "6"], answer: 1 },
+    { q: "Which is the largest ocean?", options: ["Atlantic", "Pacific", "Indian", "Arctic"], answer: 1 }
   ];
 
   let currentQ = 0;
   let score = 0;
-  let selected = null;
+  const totalTime = 10 * 60; // 10 minutes in seconds
+  let timeLeft = totalTime;
+  let timerInterval;
 
   const quizContent = document.getElementById("quizContent");
   const nextBtn = document.getElementById("nextBtn");
+  const submitBtn = document.getElementById("submitBtn");
   const resultDiv = document.getElementById("result");
+  const timerDiv = document.getElementById("timer");
+  const questionCountDiv = document.getElementById("question-count");
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft < 0) {
+        clearInterval(timerInterval);
+        alert("Time's up! Submitting your quiz.");
+        submitQuiz();
+        return;
+      }
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    let minutes = Math.floor(timeLeft / 60);
+    let seconds = timeLeft % 60;
+    timerDiv.textContent = `Time Left: ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+  }
 
   function loadQuestion() {
-    if (currentQ < questions.length) {
-      const qObj = questions[currentQ];
-      let html = `<div class='question'>${qObj.q}</div>`;
-      qObj.options.forEach((opt, i) => {
-        html += `<label class='option'><input type='radio' name='option' value='${i}'> ${opt}</label>`;
+    questionCountDiv.textContent = `Question ${currentQ + 1} of ${questions.length}`;
+    const qObj = questions[currentQ];
+    let html = `<div class='question'>${qObj.q}</div>`;
+    qObj.options.forEach((opt, i) => {
+      html += `<label class='option'><input type='radio' name='option' value='${i}'> ${opt}</label>`;
+    });
+    quizContent.innerHTML = html;
+
+    nextBtn.disabled = true;
+    submitBtn.disabled = true;
+
+    // Listen for option selection to enable buttons
+    const optionInputs = document.querySelectorAll("input[name='option']");
+    optionInputs.forEach(input => {
+      input.addEventListener('change', () => {
+        if (currentQ === questions.length -1) {
+          submitBtn.disabled = false;
+        } else {
+          nextBtn.disabled = false;
+        }
       });
-      quizContent.innerHTML = html;
+    });
+
+    // Toggle buttons visibility
+    if (currentQ === questions.length - 1) {
+      nextBtn.style.display = "none";
+      submitBtn.style.display = "inline-block";
     } else {
-      showResult();
+      nextBtn.style.display = "inline-block";
+      submitBtn.style.display = "none";
     }
   }
 
@@ -74,34 +200,60 @@
     loadQuestion();
   }
 
-  function showResult() {
+  function submitQuiz() {
+    const selectedOption = document.querySelector("input[name='option']:checked");
+    if (!selectedOption) {
+      alert("Please select an answer!");
+      return;
+    }
+
+    if (parseInt(selectedOption.value) === questions[currentQ].answer) {
+      score++;
+    }
+
+    clearInterval(timerInterval);
     quizContent.innerHTML = "";
     nextBtn.style.display = "none";
-    resultDiv.innerHTML = `Your Score: ${score}/${questions.length}`;
+    submitBtn.style.display = "none";
+    questionCountDiv.textContent = "";
+    timerDiv.textContent = "";
+    resultDiv.innerHTML = `Your Score: ${score} / ${questions.length}`;
+
     sendToSheet();
   }
 
+  function sendToSheet() {
+    const studentName = localStorage.getItem("studentName") || "Unknown";
+    const studentClass = localStorage.getItem("studentClass") || "Unknown";
 
-// Assume you saved Name and Class in localStorage from index.html
-const studentName = localStorage.getItem("studentName");
-const studentClass = localStorage.getItem("studentClass");
-const score = finalScore; // Replace with your quiz score variable
+    fetch("https://script.google.com/macros/s/AKfycbyWQvzbwnrv9cgcRSEW-Nw9IYR3fUEUvEFkyfQD8yFHN0eaWK9ksDsWax9VTOjqn4cp/exec", {
+      method: "POST",
+      body: new URLSearchParams({
+        "Name": studentName,
+        "Class": studentClass,
+        "Score": score
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Saved to Google Sheet:", data);
+      // Redirect back to index.html after 3 seconds
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 3000);
+    })
+    .catch(err => {
+      console.error("Error:", err);
+      // Redirect anyway
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 3000);
+    });
+  }
 
-fetch("https://script.google.com/macros/s/AKfycbyWQvzbwnrv9cgcRSEW-Nw9IYR3fUEUvEFkyfQD8yFHN0eaWK9ksDsWax9VTOjqn4cp/exec", {
-  method: "POST",
-  body: new URLSearchParams({
-    "Name": studentName,
-    "Class": studentClass,
-    "Score": score
-  })
-})
-.then(res => res.json())
-.then(data => {
-  console.log("Saved to Google Sheet:", data);
-})
-.catch(err => console.error("Error:", err));
-
+  // Start
   loadQuestion();
+  startTimer();
 </script>
 
 </body>
