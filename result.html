@@ -35,39 +35,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="result.js"></script>
 
-<script>
-function saveScore(score) {
-  const scriptURL = "https://script.google.com/macros/s/AKfycbwnWWWX-XVnsHs-GPFdoLsDaVYCRzQak6BKBSWn3eibl1N21bO-t8HCIcI95iRnlHMV/exec";
-
-  // Get saved login data
-  const studentData = JSON.parse(localStorage.getItem("studentData") || "{}");
-  if (!studentData.name || !studentData.studentClass) {
-    alert("Student information missing — please log in first.");
-    return;
-  }
-
-  // Send to Google Sheet
-  fetch(scriptURL, {
-    method: "POST",
-    body: new URLSearchParams({
-      Name: studentData.name,
-      Class: studentData.studentClass,
-      Score: score,
-      Date: new Date().toISOString()
-    }),
-    headers: { "Content-Type": "application/x-www-form-urlencoded" }
-  })
-  .then(() => {
-    console.log("Score submitted successfully");
-  })
-  .catch(error => {
-    console.error("Error submitting score:", error);
-  });
-}
-
-// Example: call this when the quiz ends
-// saveScore(finalScore);
-</script>
 
 </body>
 </html>
