@@ -1,260 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Quiz with Timer</title>
-<style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f4f8;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-  }
-  .quiz-container {
-    background: white;
-    max-width: 600px;
-    width: 100%;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    position: relative;
-  }
-  h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #333;
-  }
-  #timer {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-weight: 700;
-    color: #d9534f;
-    font-size: 18px;
-  }
-  #question-count {
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #555;
-  }
-  .question {
-    font-size: 20px;
-    margin-bottom: 15px;
-    color: #222;
-  }
-  .option {
-    display: block;
-    background: #f9f9f9;
-    padding: 12px 15px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color 0.3s;
-    user-select: none;
-  }
-  .option:hover {
-    border-color: #007BFF;
-    background: #e7f0fe;
-  }
-  input[type="radio"] {
-    margin-right: 12px;
-    transform: scale(1.2);
-    cursor: pointer;
-  }
-  #nextBtn, #submitBtn {
-    margin-top: 20px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    font-size: 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    float: right;
-    transition: background-color 0.3s;
-  }
-  #nextBtn:disabled, #submitBtn:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-  }
-  #nextBtn:hover:not(:disabled), #submitBtn:hover:not(:disabled) {
-    background-color: #0056b3;
-  }
-  #result {
-    font-size: 22px;
-    font-weight: 600;
-    color: #28a745;
-    margin-top: 40px;
-    text-align: center;
-    clear: both;
-  }
-  .clearfix::after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    .question-card {
+      display: none;
+    }
+
+    .question-card.active {
+      display: block;
+    }
+
+    h4 {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      padding: 10px;
+      background: #f1f1f1;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #28a745;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      background: #aaa;
+      cursor: not-allowed;
+    }
+
+    .btn-next {
+      float: right;
+    }
+
+    .btn-submit {
+      background: #007bff;
+      float: right;
+    }
+
+    .clearfix::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
+    #quiz-timer {
+      font-size: 20px;
+      font-weight: bold;
+      color: red;
+      text-align: right;
+      margin-bottom: 20px;
+    }
+  </style>
+
+
 </head>
 <body>
-
-<div class="quiz-container">
-  <h2>Quiz</h2>
-  <div id="timer">Time Left: 10:00</div>
-  <div id="question-count"></div>
-  <div id="quizContent"></div>
-  <div class="clearfix">
-    <button id="nextBtn" onclick="nextQuestion()" disabled>Next</button>
-    <button id="submitBtn" onclick="submitQuiz()" disabled style="display:none;">Submit</button>
+<div id="quiz-timer">Time Left: <span id="time">10:00</span></div>
+  <div class="quiz-container" id="quizContainer">
+    
   </div>
-  <div id="result"></div>
-</div>
 
-<script>
-  const questions = [
-    { q: "What is the capital of Pakistan?", options: ["Karachi", "Islamabad", "Lahore", "Quetta"], answer: 1 },
-    { q: "2 + 2 = ?", options: ["3", "4", "5", "6"], answer: 1 },
-    { q: "Which is the largest ocean?", options: ["Atlantic", "Pacific", "Indian", "Arctic"], answer: 1 }
-  ];
+  <script>
+    const quizData = [
+      {
+        "question": "When did Pakistan gain independence?",
+        "options": ["A) 15th August 1947", "B) 14th August 1947", "C) 26th January 1950", "D) 23rd March 1940"],
+        "answer": "B) 14th August 1947"
+      },
+      {
+        "question": "Which event does Pakistan's Independence Day commemorate?",
+        "options": ["A) Adoption of the Constitution", "B) Formation of the Muslim League", "C) End of British colonial rule", "D) Declaration of Republic"],
+        "answer": "C) End of British colonial rule"
+      },
+      {
+        "question": "Who is known as the 'Father of the Nation' in Pakistan?",
+        "options": ["A) Allama Iqbal", "B) Liaquat Ali Khan", "C) Muhammad Ali Jinnah", "D) Chaudhry Rehmat Ali"],
+        "answer": "C) Muhammad Ali Jinnah"
+      },
+      {
+        "question": "Who proposed the name 'Pakistan'?",
+        "options": ["A) Allama Iqbal", "B) Chaudhry Rehmat Ali", "C) Liaquat Ali Khan", "D) Sir Syed Ahmed Khan"],
+        "answer": "B) Chaudhry Rehmat Ali"
+      },
+      {
+        "question": "When was the Lahore Resolution passed?",
+        "options": ["A) 23rd March 1940", "B) 14th August 1947", "C) 26th January 1950", "D) 11th September 1948"],
+        "answer": "A) 23rd March 1940"
+      },
+      {
+        "question": "Which organization led the Pakistan Movement?",
+        "options": ["A) Indian National Congress", "B) All-India Muslim League", "C) Khilafat Movement", "D) None of the above"],
+        "answer": "B) All-India Muslim League"
+      },
+      {
+        "question": "What is the national language of Pakistan?",
+        "options": ["A) Punjabi", "B) Urdu", "C) Sindhi", "D) English"],
+        "answer": "B) Urdu"
+      },
+      {
+        "question": "Which is the highest military award in Pakistan?",
+        "options": ["A) Nishan-e-Haider", "B) Sitara-e-Jurat", "C) Tamgha-e-Imtiaz", "D) Hilal-e-Imtiaz"],
+        "answer": "A) Nishan-e-Haider"
+      },
+      {
+        "question": "What is the national flower of Pakistan?",
+        "options": ["A) Rose", "B) Jasmine", "C) Sunflower", "D) Lily"],
+        "answer": "B) Jasmine"
+      },
+       {
+        "question": "What is the capital of Karachi?",
+        "options": ["A)Sindh ", "B) Islamabad", "C) Lahore", "D) Peshwar"],
+        "answer": "B) Islamabad"
+      },
+      {
+        "question": "Which bird is the national bird of Pakistan?",
+        "options": ["A) Peacock", "B) Chukar Partridge", "C) Sparrow", "D) Eagle"],
+        "answer": "B) Chukar Partridge"
+      },
+      {
+        "question": "Which province is known for its vibrant Sindhi culture?",
+        "options": ["A) Punjab", "B) Sindh", "C) Balochistan", "D) Khyber Pakhtunkhwa"],
+        "answer": "B) Sindh"
+      },
+      {
+        "question": "Which festival is celebrated by the Kalash people?",
+        "options": ["A) Basant", "B) Chilam Joshi", "C) Eid-ul-Fitr", "D) Nowruz"],
+        "answer": "B) Chilam Joshi"
+      },
+      {
+        "question": "Which language is predominantly spoken in Balochistan?",
+        "options": ["A) Pashto", "B) Balochi", "C) Sindhi", "D) Punjabi"],
+        "answer": "B) Balochi"
+      },
+      {
+        "question": "What is the official language used in Pakistan's legal system?",
+        "options": ["A) Urdu", "B) English", "C) Punjabi", "D) Pashto"],
+        "answer": "B) English"
+      },
+      {
+        "question": "Which city is known as the cultural capital of Pakistan?",
+        "options": ["A) Islamabad", "B) Lahore", "C) Karachi", "D) Peshawar"],
+        "answer": "B) Lahore"
+      },
+      {
+        "question": "Which language is primarily spoken in the province of Sindh?",
+        "options": ["A) Punjabi", "B) Pashto", "C) Sindhi", "D) Balochi"],
+        "answer": "C) Sindhi"
+      },
+      {
+        "question": "Who was the first female Prime Minister of Pakistan?",
+        "options": ["A) Fatima Jinnah", "B) Benazir Bhutto", "C) Hina Rabbani Khar", "D) Malala Yousafzai"],
+        "answer": "B) Benazir Bhutto"
+      },
+      {
+        "question": "Which mountain range is located in the northern part of Pakistan?",
+        "options": ["A) Alps", "B) Himalayas", "C) Andes", "D) Rockies"],
+        "answer": "B) Himalayas"
+      },
+      {
+        "question": "What is the national sport of Pakistan?",
+        "options": ["A) Cricket", "B) Hockey", "C) Football", "D) Squash"],
+        "answer": "B) Hockey"
+      },
+      {
+        "question": "Which river is the longest in Pakistan?",
+        "options": ["A) Jhelum", "B) Chenab", "C) Indus", "D) Ravi"],
+        "answer": "C) Indus"
+      },
+      {
+        "question": "Which province is the largest by area in Pakistan?",
+        "options": ["A) Punjab", "B) Sindh", "C) Khyber Pakhtunkhwa", "D) Balochistan"],
+        "answer": "D) Balochistan"
+      },
+      {
+        "question": "Who composed the music for Pakistan's national anthem?",
+        "options": ["A) Nisar Bazmi", "B) Sohail Rana", "C) Ahmad G. Chagla", "D) Nusrat Fateh Ali Khan"],
+        "answer": "C) Ahmad G. Chagla"
+      },
+      {
+        "question": "Which city is known as the 'City of Lights' in Pakistan?",
+        "options": ["A) Lahore", "B) Islamabad", "C) Karachi", "D) Quetta"],
+        "answer": "C) Karachi"
+      },
+      {
+        "question": "What is the national animal of Pakistan?",
+        "options": ["A) Markhor", "B) Lion", "C) Tiger", "D) Elephant"],
+        "answer": "A) Markhor"
+      },
+      {
+        "question": "Which Pakistani scientist won the Nobel Prize in Physics in 1979?",
+        "options": ["A) Dr. Abdul Qadeer Khan", "B) Dr. Atta-ur-Rahman", "C) Dr. Abdus Salam", "D) Dr. Samar Mubarakmand"],
+        "answer": "C) Dr. Abdus Salam"
+      },
+      {
+        "question": "Which city is famous for producing sports goods in Pakistan?",
+        "options": ["A) Sialkot", "B) Gujranwala", "C) Faisalabad", "D) Multan"],
+        "answer": "A) Sialkot"
+      },
+      {
+        "question": "Which Pakistani woman won the Nobel Peace Prize in 2014?",
+        "options": ["A) Sharmeen Obaid-Chinoy", "B) Malala Yousafzai", "C) Benazir Bhutto", "D) Asma Jahangir"],
+        "answer": "B) Malala Yousafzai"
+      },
+      {
+        "question": "Which desert is located in the southeastern part of Pakistan?",
+        "options": ["A) Thar Desert", "B) Sahara Desert", "C) Gobi Desert", "D) Kalahari Desert"],
+        "answer": "A) Thar Desert"
+      },
+      {
+        "question": "Which Pakistani city is known for its historical Mughal architecture?",
+        "options": ["A) Islamabad", "B) Lahore", "C) Peshawar", "D) Rawalpindi"],
+        "answer": "B) Lahore"
+      }
+    ];
 
-  let currentQ = 0;
-  let score = 0;
-  const totalTime = 10 * 60; // 10 minutes in seconds
-  let timeLeft = totalTime;
-  let timerInterval;
+    let currentUser  = JSON.parse(localStorage.getItem("studentData"));
+    if (!currentUser ) window.location.href = "index.html";
 
-  const quizContent = document.getElementById("quizContent");
-  const nextBtn = document.getElementById("nextBtn");
-  const submitBtn = document.getElementById("submitBtn");
-  const resultDiv = document.getElementById("result");
-  const timerDiv = document.getElementById("timer");
-  const questionCountDiv = document.getElementById("question-count");
+    const quizContainer = document.getElementById("quizContainer");
 
-  function startTimer() {
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      if (timeLeft < 0) {
-        clearInterval(timerInterval);
-        alert("Time's up! Submitting your quiz.");
-        submitQuiz();
+    quizData.forEach((q, index) => {
+      const div = document.createElement("div");
+      div.className = `question-card ${index === 0 ? 'active' : ''}`;
+      div.id = `question-${index}`;
+      div.innerHTML = `
+        <h4>Q${index + 1}: ${q.question}</h4>
+        ${q.options.map(opt => `
+          <label><input type="radio" name="q${index}" value="${opt}"/> ${opt}</label>
+        `).join("")}
+        <div class="clearfix">
+          ${index < quizData.length - 1
+            ? `<button class="btn btn-next" onclick="nextQuestion(${index})">Next</button>`
+            : `<button class="btn btn-submit" onclick="submitQuiz()">Submit</button>`}
+        </div>
+      `;
+      quizContainer.appendChild(div);
+    });
+
+    function nextQuestion(index) {
+      document.getElementById(`question-${index}`).classList.remove("active");
+      document.getElementById(`question-${index + 1}`).classList.add("active");
+    }
+
+    function submitQuiz() {
+      const answers = [];
+      quizData.forEach((q, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        answers.push({
+          question: q.question,
+          selected: selected ? selected.value : "No Answer",
+          correct: q.answer
+        });
+      });
+
+      const result = {
+        name: currentUser .name,
+        class: currentUser .studentClass,
+        time: new Date().toLocaleString(),
+        score: answers.filter(a => a.selected === a.correct).length,
+        total: quizData.length,
+        answers
+      };
+
+      const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
+      if (results.some(r => r.name === result.name && r.class === result.class)) {
+        alert("You have already submitted the quiz.");
         return;
       }
-      updateTimerDisplay();
+
+      results.push(result);
+      localStorage.setItem("quizResults", JSON.stringify(results));
+   
+      window.location.href = "index.html";
+    }
+   
+    let duration = 10 * 60; 
+    let display = document.getElementById('time');
+
+    const timer = setInterval(() => {
+      let minutes = Math.floor(duration / 60);
+      let seconds = duration % 60;
+
+      display.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+      if (--duration < 0) {
+        clearInterval(timer);
+        alert("Time's up! Submitting your quiz.");
+        submitQuiz(); // Automatically submit the quiz when time is up
+      }
     }, 1000);
-  }
 
-  function updateTimerDisplay() {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    timerDiv.textContent = `Time Left: ${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-  }
-
-  function loadQuestion() {
-    questionCountDiv.textContent = `Question ${currentQ + 1} of ${questions.length}`;
-    const qObj = questions[currentQ];
-    let html = `<div class='question'>${qObj.q}</div>`;
-    qObj.options.forEach((opt, i) => {
-      html += `<label class='option'><input type='radio' name='option' value='${i}'> ${opt}</label>`;
-    });
-    quizContent.innerHTML = html;
-
-    nextBtn.disabled = true;
-    submitBtn.disabled = true;
-
-    // Listen for option selection to enable buttons
-    const optionInputs = document.querySelectorAll("input[name='option']");
-    optionInputs.forEach(input => {
-      input.addEventListener('change', () => {
-        if (currentQ === questions.length -1) {
-          submitBtn.disabled = false;
-        } else {
-          nextBtn.disabled = false;
-        }
-      });
-    });
-
-    // Toggle buttons visibility
-    if (currentQ === questions.length - 1) {
-      nextBtn.style.display = "none";
-      submitBtn.style.display = "inline-block";
-    } else {
-      nextBtn.style.display = "inline-block";
-      submitBtn.style.display = "none";
-    }
-  }
-
-  function nextQuestion() {
-    const selectedOption = document.querySelector("input[name='option']:checked");
-    if (!selectedOption) {
-      alert("Please select an answer!");
-      return;
-    }
-
-    if (parseInt(selectedOption.value) === questions[currentQ].answer) {
-      score++;
-    }
-
-    currentQ++;
-    loadQuestion();
-  }
-
-  function submitQuiz() {
-    const selectedOption = document.querySelector("input[name='option']:checked");
-    if (!selectedOption) {
-      alert("Please select an answer!");
-      return;
-    }
-
-    if (parseInt(selectedOption.value) === questions[currentQ].answer) {
-      score++;
-    }
-
-    clearInterval(timerInterval);
-    quizContent.innerHTML = "";
-    nextBtn.style.display = "none";
-    submitBtn.style.display = "none";
-    questionCountDiv.textContent = "";
-    timerDiv.textContent = "";
-    resultDiv.innerHTML = `Your Score: ${score} / ${questions.length}`;
-
-    sendToSheet();
-  }
-
-  function sendToSheet() {
-    const studentName = localStorage.getItem("studentName") || "Unknown";
-    const studentClass = localStorage.getItem("studentClass") || "Unknown";
-
-    fetch("https://script.google.com/macros/s/AKfycbyWQvzbwnrv9cgcRSEW-Nw9IYR3fUEUvEFkyfQD8yFHN0eaWK9ksDsWax9VTOjqn4cp/exec", {
-      method: "POST",
-      body: new URLSearchParams({
-        "Name": studentName,
-        "Class": studentClass,
-        "Score": score
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Saved to Google Sheet:", data);
-      // Redirect back to index.html after 3 seconds
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 3000);
-    })
-    .catch(err => {
-      console.error("Error:", err);
-      // Redirect anyway
-      setTimeout(() => {
-        window.location.href = "index.html";
-      }, 3000);
-    });
-  }
-
-  // Start
-  loadQuestion();
-  startTimer();
-</script>
+  </script>
 
 </body>
 </html>
