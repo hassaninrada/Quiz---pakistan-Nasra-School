@@ -254,65 +254,26 @@
         "answer": "B) Lahore"
       }
     ];
+    localStorage.setItem('studentName', document.getElementById('name').value);
+localStorage.setItem('studentClass', document.getElementById('class').value);
+const name = localStorage.getItem('studentName');
+const studentClass = localStorage.getItem('studentClass');
+const score = document.getElementById('score').innerText;
+
+fetch('https://script.google.com/macros/s/AKfycbzYsiow_9gpRwmLWNG9cq51DS1iRMBj3Mleqbk2iay3S9P4RVLbYcLD8GXPE4Xr6cc1/exec', {
+  method: 'POST',
+  body: new URLSearchParams({
+    'Name': name,
+    'Class': studentClass,
+    'Score': score
+  })
+})
+.then(res => res.json())
+.then(data => console.log('Saved to sheet:', data))
+.catch(err => console.error('Error:', err));
+
 <script>
-<script>
-let score = 0;
-let currentQuestion = 0;
-let totalQuestions = questions.length; // Your questions array
-let studentName = "";
-let studentClass = "";
 
-// Call this when quiz starts
-function startQuiz(name, className) {
-  studentName = name;
-  studentClass = className;
-  showQuestion();
-}
-
-// Show question logic here
-function showQuestion() {
-  if (currentQuestion >= totalQuestions) {
-    endQuiz();
-    return;
-  }
-  // Your existing logic to display question goes here...
-}
-
-// Call when user answers a question
-function answerQuestion(isCorrect) {
-  if (isCorrect) score++;
-  currentQuestion++;
-  showQuestion();
-}
-
-// End quiz
-function endQuiz() {
-  document.getElementById("quizContainer").style.display = "none";
-  document.getElementById("resultContainer").style.display = "block";
-  
-  document.getElementById("studentNameDisplay").innerText = studentName;
-  document.getElementById("studentClassDisplay").innerText = studentClass;
-  document.getElementById("scoreDisplay").innerText = `${score} / ${totalQuestions}`;
-
-  sendResultToSheet();
-}
-
-// Send data to Google Sheet
-function sendResultToSheet() {
-  fetch("https://script.google.com/macros/s/AKfycbz9mKEfVN9uQ5HMx93NGI5envOvLqKIKvlxNHLqTT0qJqMsI8acU5b-JYBY5fblFjWc/exec", {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      Name: studentName,
-      Class: studentClass,
-      Score: `${score}/${totalQuestions}`,
-      Date: new Date().toLocaleString()
-    })
-  });
-}
-
-</script>
 
 
 </body>
