@@ -91,7 +91,7 @@
   <div class="quiz-container" id="quizContainer">
     
   </div>
-
+<p>Your score: <span id="score">score:</span></p>
   <script>
     const quizData = [
       {
@@ -306,6 +306,8 @@ function submitQuiz() {
 
   // Send to Google Sheets
   fetch("https://script.google.com/macros/s/AKfycbz2sJxICgQUlum1y2EnqvJkQdmNTlRDbPz9gTaKNGYIQZlW5mNhs2fyomdQewjPwi_f/exec", {
+  function submitScore() {
+    let score = document.getElementById('score').innerText;
     method: "POST",
     body: new URLSearchParams(result),
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
