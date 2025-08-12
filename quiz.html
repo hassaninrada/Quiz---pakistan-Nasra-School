@@ -88,9 +88,18 @@
 </head>
 <body>
 <div id="quiz-timer">Time Left: <span id="time">10:00</span></div>
-  <div class="quiz-container" id="quizContainer">
-    <p>Your score: <span id="score"></span></p>
-  </div>
+
+<div class="quiz-container" id="quizContainer">
+  <!-- Questions will appear here -->
+</div>
+
+<!-- Result Section (hidden until quiz ends) -->
+<div id="resultContainer" style="display:none; margin-top:20px;">
+  <p>Name: <span id="studentNameDisplay"></span></p>
+  <p>Class: <span id="studentClassDisplay"></span></p>
+  <p>Your score: <span id="scoreDisplay"></span></p>
+</div>
+
 
   <script>
     const quizData = [
@@ -247,89 +256,62 @@
     ];
 <script>
 <script>
-let currentUser = JSON.parse(localStorage.getItem("studentData"));
-if (!currentUser) window.location.href = "index.html";
+let score = 0;
+let currentQuestion = 0;
+let totalQuestions = questions.length; // Your questions array
+let studentName = "";
+let studentClass = "";
 
-// Show user info
-document.getElementById("studentName").textContent = currentUser.name || "";
-document.getElementById("studentClass").textContent = currentUser.studentClass || "";
-
-const quizContainer = document.getElementById("quizContainer");
-
-// Display questions
-quizData.forEach((q, index) => {
-  const div = document.createElement("div");
-  div.className = `question-card ${index === 0 ? 'active' : ''}`;
-  div.id = `question-${index}`;
-  div.innerHTML = `
-    <h4>Q${index + 1}: ${q.question}</h4>
-    ${q.options.map(opt => `<label><input type="radio" name="q${index}" value="${opt}"/> ${opt}</label>`).join("")}
-    <div class="clearfix">
-      ${index < quizData.length - 1
-        ? `<button class="btn btn-next" onclick="nextQuestion(${index})">Next</button>`
-        : `<button class="btn btn-submit" onclick="submitQuiz()">Submit</button>`}
-    </div>
-  `;
-  quizContainer.appendChild(div);
-});
-
-function nextQuestion(index) {
-  document.getElementById(`question-${index}`).classList.remove("active");
-  document.getElementById(`question-${index + 1}`).classList.add("active");
+// Call this when quiz starts
+function startQuiz(name, className) {
+  studentName = name;
+  studentClass = className;
+  showQuestion();
 }
 
-function submitQuiz() {
-  const answers = [];
-  quizData.forEach((q, i) => {
-    const selected = document.querySelector(`input[name="q${i}"]:checked`);
-    answers.push({ question: q.question, selected: selected ? selected.value : "No Answer", correct: q.answer });
-  });
+// Show question logic here
+function showQuestion() {
+  if (currentQuestion >= totalQuestions) {
+    endQuiz();
+    return;
+  }
+  // Your existing logic to display question goes here...
+}
 
-  const score = answers.filter(a => a.selected === a.correct).length;
-  document.getElementById("score").textContent = `${score} / ${quizData.length}`;
+// Call when user answers a question
+function answerQuestion(isCorrect) {
+  if (isCorrect) score++;
+  currentQuestion++;
+  showQuestion();
+}
 
-  const result = {
-    Name: currentUser.name || "",
-    Class: currentUser.studentClass || "",
-    Score: score,
-    Time: new Date().toLocaleString()
-  };
+// End quiz
+function endQuiz() {
+  document.getElementById("quizContainer").style.display = "none";
+  document.getElementById("resultContainer").style.display = "block";
+  
+  document.getElementById("studentNameDisplay").innerText = studentName;
+  document.getElementById("studentClassDisplay").innerText = studentClass;
+  document.getElementById("scoreDisplay").innerText = `${score} / ${totalQuestions}`;
 
-  // Save locally
-  const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
-  results.push(result);
-  localStorage.setItem("quizResults", JSON.stringify(results));
+  sendResultToSheet();
+}
 
-  // Send to Google Sheets
+// Send data to Google Sheet
+function sendResultToSheet() {
   fetch("https://script.google.com/macros/s/AKfycbz9mKEfVN9uQ5HMx93NGI5envOvLqKIKvlxNHLqTT0qJqMsI8acU5b-JYBY5fblFjWc/exec", {
     method: "POST",
-    body: new URLSearchParams(result),
-    headers: { "Content-Type": "application/x-www-form-urlencoded" }
-  })
-  .then(res => res.text())
-  .then(() => {
-    alert("Quiz submitted successfully!");
-    window.location.href = "index.html";
-  })
-  .catch(err => {
-    console.error(err);
-    alert("There was a problem submitting your data.");
+    mode: "no-cors",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      Name: studentName,
+      Class: studentClass,
+      Score: `${score}/${totalQuestions}`,
+      Date: new Date().toLocaleString()
+    })
   });
 }
 
-// Timer
-let duration = 10 * 60;
-let display = document.getElementById('time');
-const timer = setInterval(() => {
-  let minutes = Math.floor(duration / 60);
-  let seconds = duration % 60;
-  display.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  if (--duration < 0) {
-    clearInterval(timer);
-    alert("Time's up! Submitting your quiz.");
-    submitQuiz();
-  }
-}, 1000);
 </script>
 
 
