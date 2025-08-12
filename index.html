@@ -4,76 +4,104 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student Login - Quiz</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Simple inline CSS for demo */
+    body.login-page {
+      font-family: Arial, sans-serif;
+      background: #eef6ff;
+      margin: 0;
+      padding: 20px;
+    }
+    .nasra-logo, .pakistan-flag {
+      position: fixed;
+      top: 10px;
+      width: 50px;
+      height: 50px;
+    }
+    .nasra-logo { left: 10px; }
+    .pakistan-flag { right: 10px; }
+    .nasra-logo img, .pakistan-flag img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .container {
+      max-width: 400px;
+      margin: 80px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #aaa;
+      text-align: center;
+    }
+    select, input[type="text"], button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body class="login-page">
 
-<!-- Nasra School Logo (Top-Left) -->
-<div class="nasra-logo">
-  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsz1ZUEhZlwoRbvV2UJA8Ju0mz4HYwdy9zrNhGr4h0B3a-6juPuGbOCJEc7E9YqfuDAk4&usqp=CAU" alt="Nasra Logo">
-</div>
+  <!-- Nasra School Logo (Top-Left) -->
+  <div class="nasra-logo">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsz1ZUEhZlwoRbvV2UJA8Ju0mz4HYwdy9zrNhGr4h0B3a-6juPuGbOCJEc7E9YqfuDAk4&usqp=CAU" alt="Nasra Logo">
+  </div>
 
-<!-- Pakistan Flag (Top-Right) -->
-<div class="pakistan-flag">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
-</div>
+  <!-- Pakistan Flag (Top-Right) -->
+  <div class="pakistan-flag">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
+  </div>
 
-<div class="container">
-  <h2>Student Login</h2>
+  <div class="container">
+    <h2>Student Login</h2>
 
-  <!-- Class Dropdown -->
-  <select id="studentClass" required>
-    <option value="">Select Your Class</option>
-    <option value="6">Class 6</option>
-    <option value="7">Class 7</option>
-    <option value="8">Class 8</option>
-    <option value="9">Class 9</option>
-    <option value="10">Class 10</option>
-  </select>
+    <!-- Class Dropdown -->
+    <select id="studentClass" required>
+      <option value="">Select Your Class</option>
+      <option value="6">Class 6</option>
+      <option value="7">Class 7</option>
+      <option value="8">Class 8</option>
+      <option value="9">Class 9</option>
+      <option value="10">Class 10</option>
+    </select>
 
-  <!-- Name Input -->
-  <input type="text" id="studentName" placeholder="Enter your Name" required>
+    <!-- Name Input -->
+    <input type="text" id="studentName" placeholder="Enter your Name" required>
 
-  <!-- Start Quiz Button -->
-  <button onclick="startQuiz()">Start Quiz</button>
-</div>
+    <!-- Start Quiz Button -->
+    <button onclick="startQuiz()">Start Quiz</button>
+  </div>
 
-<script>
-function startQuiz() {
-  const studentClass = document.getElementById('studentClass').value.trim();
-  const name = document.getElementById('studentName').value.trim();
+  <script>
+    function startQuiz() {
+      const studentClass = document.getElementById('studentClass').value.trim();
+      const name = document.getElementById('studentName').value.trim();
 
-  if (!studentClass || !name) {
-    alert("Please select your Class and enter your Name.");
-    return;
-  }
+      if (!studentClass || !name) {
+        alert("Please select your Class and enter your Name.");
+        return;
+      }
 
-  // Save student info locally for quiz.html
-  localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
+      // Save student info locally for quiz.html
+      localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
 
-  // Go to quiz page
-  window.location.href = "quiz.html";
-}
-  fetch("https://script.google.com/macros/s/AKfycbz8w-wONSm0Tu2ELeETx_PQrZAxAQY_FxJT6kwBHvBYrf0C7EwpQvO1BsRm5sRzgvDV/exec", {
-  method: "POST",
-  body: new URLSearchParams(result)
-})
-.then(res => res.json())
-.then(data => {
-  if (data.result === 'success') {
-    alert(`Quiz submitted successfully! Your score: ${result.Score}/${quizData.length}`);
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 3000);
-  } else {
-    alert("Submission failed: " + data.error);
-  }
-})
-.catch(err => {
-  alert("Error submitting quiz: " + err.message);
-});
-</script>
+      // Redirect to quiz page
+      window.location.href = "quiz.html";
+    }
+  </script>
 
 </body>
 </html>
-
