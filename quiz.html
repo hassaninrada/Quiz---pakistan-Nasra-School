@@ -89,9 +89,9 @@
 <body>
 <div id="quiz-timer">Time Left: <span id="time">10:00</span></div>
   <div class="quiz-container" id="quizContainer">
-    
+    <p>Your score: <span id="score">score:</span></p>
   </div>
-<p>Your score: <span id="score">score:</span></p>
+
   <script>
     const quizData = [
       {
@@ -289,12 +289,11 @@ function submitQuiz() {
   const result = {
     Name: currentUser.name,
     Class: currentUser.studentClass,
-    Time: new Date().toLocaleString(),
     Score: score,
-    Total: quizData.length
+    Time: new Date().toLocaleString()
   };
 
-  // Save to local storage
+  // Save locally
   const results = JSON.parse(localStorage.getItem("quizResults") || "[]");
   if (results.some(r => r.Name === result.Name && r.Class === result.Class)) {
     alert("You have already submitted the quiz.");
@@ -306,11 +305,7 @@ function submitQuiz() {
   // Send to Google Sheets
   fetch("https://script.google.com/macros/s/AKfycbz9mKEfVN9uQ5HMx93NGI5envOvLqKIKvlxNHLqTT0qJqMsI8acU5b-JYBY5fblFjWc/exec", {
     method: "POST",
-    body: new URLSearchParams({
-      "Name": result.Name,
-      "Class": result.Class,
-      "Score": result.Score
-    }),
+    body: new URLSearchParams(result),
     headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
   .then(res => res.text())
@@ -330,7 +325,9 @@ let display = document.getElementById('time');
 const timer = setInterval(() => {
   let minutes = Math.floor(duration / 60);
   let seconds = duration % 60;
+
   display.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
   if (--duration < 0) {
     clearInterval(timer);
     alert("Time's up! Submitting your quiz.");
