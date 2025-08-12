@@ -245,8 +245,7 @@
         "answer": "B) Lahore"
       }
     ];
-
-   let currentUser = JSON.parse(localStorage.getItem("studentData"));
+let currentUser = JSON.parse(localStorage.getItem("studentData"));
 if (!currentUser) window.location.href = "index.html";
 
 const quizContainer = document.getElementById("quizContainer");
@@ -305,22 +304,25 @@ function submitQuiz() {
   localStorage.setItem("quizResults", JSON.stringify(results));
 
   // Send to Google Sheets
-
-  <script>
-function saveScore(score) {
   fetch("https://script.google.com/macros/s/AKfycbz9mKEfVN9uQ5HMx93NGI5envOvLqKIKvlxNHLqTT0qJqMsI8acU5b-JYBY5fblFjWc/exec", {
     method: "POST",
     body: new URLSearchParams({
-      "score": score,
-      "name": document.getElementById("username").value // if you have a name input
-    })
+      "Name": result.Name,
+      "Class": result.Class,
+      "Score": result.Score
+    }),
+    headers: { "Content-Type": "application/x-www-form-urlencoded" }
   })
-  .then(res => res.json())
-  .then(data => console.log("Saved:", data))
-  .catch(err => console.error("Error:", err));
+  .then(res => res.text())
+  .then(() => {
+    alert("Quiz submitted successfully!");
+    window.location.href = "index.html";
+  })
+  .catch(err => {
+    console.error(err);
+    alert("There was a problem submitting your data.");
+  });
 }
-</script>
-
 
 // Timer
 let duration = 10 * 60;
