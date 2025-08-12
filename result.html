@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Results</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body class="result-page">
 
 <!-- Nasra School Logo (Top-Left) -->
 <div class="nasra-logo">
-  <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo">
+  <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo" />
 </div>
 
 <!-- Pakistan Flag (Top-Right) -->
 <div class="pakistan-flag">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag" />
 </div>
 
 <div class="container">
@@ -33,8 +33,67 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="result.js"></script>
+<script>
+  const ctx = document.getElementById("barChart").getContext("2d");
+  let chart;
 
+  function filterResults() {
+    const filter = document.getElementById("classFilter").value;
+    const allResults = JSON.parse(localStorage.getItem("quizResults") || "[]");
+    const filtered = filter === "all" ? allResults : allResults.filter(r => r.class === filter);
+    renderChart(filtered);
+  }
+
+  function renderChart(results) {
+    const labels = results.map(r => r.name);
+    const scores = results.map(r => r.score);
+
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Score",
+          data: scores,
+          backgroundColor: "rgba(75, 192, 192, 0.5)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  function downloadCSV() {
+    const data = JSON.parse(localStorage.getItem("quizResults") || "[]");
+    let csv = "Name,Class,Score,Total,Time\n";
+    data.forEach(d => {
+      csv += `${d.name},${d.class},${d.score},${d.total},${d.time}\n`;
+    });
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "quiz_results.csv";
+    a.click();
+  }
+
+  function confirmDeleteAll() {
+    if (confirm("Are you sure you want to delete ALL results?")) {
+      localStorage.removeItem("quizResults");
+      location.reload();
+    }
+  }
+
+  // Initialize chart on page load
+  filterResults();
+</script>
 
 </body>
 </html>
