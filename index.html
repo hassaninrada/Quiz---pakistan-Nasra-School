@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #eef6ff;
+      background: linear-gradient(to bottom, #eef6ff, #cce0ff);
       margin: 0;
       padding: 20px;
     }
@@ -30,25 +30,34 @@
       max-width: 400px;
       margin: 120px auto;
       background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      padding: 30px 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
       text-align: center;
+      position: relative;
     }
 
     h2 {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
       color: #333;
+      font-size: 1.8em;
     }
 
     select, input[type="text"], button {
       width: 100%;
       padding: 12px;
-      margin: 10px 0;
+      margin: 12px 0;
       font-size: 16px;
-      border-radius: 5px;
+      border-radius: 8px;
       border: 1px solid #ccc;
       box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    select:focus, input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0,123,255,0.3);
+      outline: none;
     }
 
     button {
@@ -56,6 +65,7 @@
       color: white;
       border: none;
       cursor: pointer;
+      font-weight: bold;
       transition: background-color 0.3s ease, opacity 0.3s ease;
     }
 
@@ -67,28 +77,27 @@
       background-color: #cccccc;
       color: #666666;
       cursor: not-allowed;
+      opacity: 0.7;
     }
 
     #status {
-      font-size: 1.5em;
+      font-size: 1.2em;
       font-weight: bold;
-      margin: 20px auto;
-      padding: 15px 25px;
+      margin: 15px 0 25px 0;
+      padding: 12px 20px;
       border-radius: 10px;
-      max-width: 350px;
       text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       transition: all 0.5s ease;
       animation: pulse 1s infinite;
     }
 
-    #status[style*="green"] {
+    #status.green {
       background-color: #d4edda;
       border: 2px solid #28a745;
       color: #155724;
     }
 
-    #status[style*="red"] {
+    #status.red {
       background-color: #f8d7da;
       border: 2px solid #dc3545;
       color: #721c24;
@@ -96,19 +105,17 @@
 
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
+      50% { transform: scale(1.03); }
       100% { transform: scale(1); }
     }
 
     @media (max-width: 500px) {
       .container { margin: 80px 10px; padding: 20px; }
-      #status { font-size: 1.2em; padding: 12px 20px; }
+      #status { font-size: 1em; padding: 10px 15px; }
     }
   </style>
 </head>
 <body>
-
-  <p id="status"></p>
 
   <div class="nasra-logo">
     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsz1ZUEhZlwoRbvV2UJA8Ju0mz4HYwdy9zrNhGr4h0B3a-6juPuGbOCJEc7E9YqfuDAk4&usqp=CAU" alt="Nasra Logo">
@@ -120,6 +127,8 @@
 
   <div class="container">
     <h2>Student Login</h2>
+
+    <p id="status">Checking time...</p>
 
     <select id="studentClass" required>
       <option value="">Select Your Class</option>
@@ -161,20 +170,20 @@
           const remainingMs = closeTime - now;
           const minutes = Math.floor(remainingMs / 60000);
           const seconds = Math.floor((remainingMs % 60000) / 1000);
-          statusElement.textContent = `Open ⏰ Closes in ${minutes}m ${seconds}s`;
-          statusElement.style.color = "green";
+          statusElement.textContent = `🟢 Open — Closes in ${minutes}m ${seconds}s`;
+          statusElement.className = "green";
           startBtn.disabled = false;
       } else if (now < openTime) {
           const remainingMs = openTime - now;
           const hours = Math.floor(remainingMs / 3600000);
           const minutes = Math.floor((remainingMs % 3600000) / 60000);
           const seconds = Math.floor((remainingMs % 60000) / 1000);
-          statusElement.textContent = `Closed ⏰ Opens in ${hours}h ${minutes}m ${seconds}s`;
-          statusElement.style.color = "red";
+          statusElement.textContent = `🔴 Closed — Opens in ${hours}h ${minutes}m ${seconds}s`;
+          statusElement.className = "red";
           startBtn.disabled = true;
       } else {
-          statusElement.textContent = "Closed ⏰ Already closed";
-          statusElement.style.color = "red";
+          statusElement.textContent = "🔴 Closed — Already closed";
+          statusElement.className = "red";
           startBtn.disabled = true;
       }
     }
