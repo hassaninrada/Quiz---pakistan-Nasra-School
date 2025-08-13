@@ -112,7 +112,8 @@
     footer {
       text-align: center;
       margin-top: 40px;
-      font-size: 0.9em;
+      font-size: 1em;
+      font-weight: bold;
       color: #555;
     }
 
@@ -149,7 +150,7 @@
 
     <input type="text" id="studentName" placeholder="Enter your Name" required>
 
-    <button id="startBtn" onclick="startQuiz()">Start Quiz</button>
+    <button id="startBtn" onclick="startQuiz()" disabled>Start Quiz</button>
   </div>
 
   <footer>Powered by Hassanin Rada</footer>
@@ -171,12 +172,11 @@
     function updateOpenStatus() {
       const now = new Date();
       const year = now.getFullYear();
-      const month = now.getMonth();
-      const day = now.getDate();
+      const month = 7; // August (0-indexed)
+      const day = 14;  // 14th August
 
-      // Set opening at 3 PM today and closing at 4 PM
-      const openTime = new Date(year, month, day, 15, 0, 0); // 3 PM
-      const closeTime = new Date(year, month, day, 16, 0, 0); // 4 PM
+      const openTime = new Date(year, month, day, 12, 0, 0); // 12 PM
+      const closeTime = new Date(year, month, day, 13, 0, 0); // 1 PM
 
       const statusElement = document.getElementById("status");
       const startBtn = document.getElementById("startBtn");
