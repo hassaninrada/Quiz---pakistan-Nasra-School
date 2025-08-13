@@ -5,114 +5,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student Login - Quiz</title>
   <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to bottom, #eef6ff, #cce0ff);
-      margin: 0;
-      padding: 20px;
-    }
+   body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(to bottom, #eef6ff, #cce0ff);
+  margin: 0;
+  padding: 30px; /* more spacious */
+}
 
-    .nasra-logo, .pakistan-flag {
-      position: fixed;
-      top: 10px;
-      width: 50px;
-      height: 100px;
-    }
-    .nasra-logo { left: 10px; }
-    .pakistan-flag { right: 10px; }
-    .nasra-logo img, .pakistan-flag img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
+.nasra-logo, .pakistan-flag {
+  position: fixed;
+  top: 10px;
+  width: 80px;   /* increased size */
+  height: 120px; /* increased size */
+}
+.nasra-logo { left: 20px; }
+.pakistan-flag { right: 20px; }
+.nasra-logo img, .pakistan-flag img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
 
-    .container {
-      max-width: 400px;
-      margin: 120px auto;
-      background: white;
-      padding: 30px 40px;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      text-align: center;
-      position: relative;
-    }
+.container {
+  max-width: 450px;  /* slightly wider */
+  margin: 140px auto; /* more top margin */
+  background: white;
+  padding: 40px 50px; /* more padding */
+  border-radius: 20px; /* slightly rounder */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2); /* slightly stronger shadow */
+  text-align: center;
+  position: relative;
+}
 
-    h2 {
-      margin-bottom: 25px;
-      color: #333;
-      font-size: 1.8em;
-    }
+h2 {
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 2em; /* slightly bigger */
+}
 
-    select, input[type="text"], button {
-      width: 100%;
-      padding: 12px;
-      margin: 12px 0;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-      transition: all 0.3s ease;
-    }
+select, input[type="text"], button {
+  width: 100%;
+  padding: 15px; /* more spacious */
+  margin: 15px 0; /* bigger gaps */
+  font-size: 18px; /* slightly bigger */
+  border-radius: 10px; /* slightly rounder */
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+}
 
-    select:focus, input:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 5px rgba(0,123,255,0.3);
-      outline: none;
-    }
+select:focus, input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 7px rgba(0,123,255,0.3); /* slightly stronger */
+  outline: none;
+}
 
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background-color 0.3s ease, opacity 0.3s ease;
-    }
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+}
 
-    button:hover:enabled {
-      background-color: #0056b3;
-    }
+button:hover:enabled {
+  background-color: #0056b3;
+}
 
-    button:disabled {
-      background-color: #cccccc;
-      color: #666666;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
+button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 
-    #status {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin: 15px 0 25px 0;
-      padding: 12px 20px;
-      border-radius: 10px;
-      text-align: center;
-      transition: all 0.5s ease;
-      animation: pulse 1s infinite;
-    }
+#status {
+  font-size: 1.4em; /* slightly bigger */
+  font-weight: bold;
+  margin: 20px 0 30px 0;
+  padding: 15px 25px; /* more padding */
+  border-radius: 12px;
+  text-align: center;
+  transition: all 0.5s ease;
+  animation: pulse 1s infinite;
+}
 
-    #status.green {
-      background-color: #d4edda;
-      border: 2px solid #28a745;
-      color: #155724;
-    }
+#status.green {
+  background-color: #d4edda;
+  border: 2px solid #28a745;
+  color: #155724;
+}
 
-    #status.red {
-      background-color: #f8d7da;
-      border: 2px solid #dc3545;
-      color: #721c24;
-    }
+#status.red {
+  background-color: #f8d7da;
+  border: 2px solid #dc3545;
+  color: #721c24;
+}
 
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-      100% { transform: scale(1); }
-    }
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
 
-    @media (max-width: 500px) {
-      .container { margin: 80px 10px; padding: 20px; }
-      #status { font-size: 1em; padding: 10px 15px; }
-    }
+@media (max-width: 500px) {
+  .container { margin: 100px 15px; padding: 25px 30px; }
+  #status { font-size: 1.1em; padding: 12px 18px; }
+  .nasra-logo, .pakistan-flag { width: 60px; height: 90px; } /* responsive */
+}
+
   </style>
 </head>
 <body>
