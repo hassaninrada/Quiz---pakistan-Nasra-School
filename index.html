@@ -54,6 +54,7 @@
   </style>
 </head>
 <body class="login-page">
+<p id="status"></p>
 
   <!-- Nasra School Logo (Top-Left) -->
   <div class="nasra-logo">
@@ -101,6 +102,44 @@
       // Redirect to quiz page
       window.location.href = "quiz.html";
     }
+    function updateOpenStatus() {
+    const now = new Date();
+    const year = now.getFullYear();
+
+    // August = 7 (0-indexed), 14th
+    const openTime = new Date(year, 7, 14, 12, 0, 0); // 12 PM
+    const closeTime = new Date(year, 7, 14, 13, 0, 0); // 1 PM
+
+    const statusElement = document.getElementById("status");
+
+    if (now >= openTime && now < closeTime) {
+        // Open now
+        const remainingMs = closeTime - now;
+        const minutes = Math.floor(remainingMs / 60000);
+        const seconds = Math.floor((remainingMs % 60000) / 1000);
+
+        statusElement.textContent = `Open ⏰ Closes in ${minutes}m ${seconds}s`;
+        statusElement.style.color = "green";
+    } else if (now < openTime) {
+        // Not open yet
+        const remainingMs = openTime - now;
+        const hours = Math.floor(remainingMs / 3600000);
+        const minutes = Math.floor((remainingMs % 3600000) / 60000);
+        const seconds = Math.floor((remainingMs % 60000) / 1000);
+
+        statusElement.textContent = `Closed ⏰ Opens in ${hours}h ${minutes}m ${seconds}s`;
+        statusElement.style.color = "red";
+    } else {
+        // After closing time
+        statusElement.textContent = "Closed ⏰ Already closed";
+        statusElement.style.color = "red";
+    }
+}
+
+// Run immediately and update every second
+updateOpenStatus();
+setInterval(updateOpenStatus, 1000);
+
   </script>
 
 </body>
