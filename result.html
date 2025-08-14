@@ -9,33 +9,6 @@
   <style>
     
 
-   /* Advanced Modern Title */
-h2 {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 2rem;
-  text-align: center;
-  color: white;
-  background: linear-gradient(90deg, #4facfe, #00f2fe);
-  padding: 14px 28px;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-  margin-bottom: 20px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  animation: fadeInTitle 1s ease-out, glowPulse 3s infinite;
-}
-
-/* Title animations */
-@keyframes fadeInTitle {
-  from { opacity: 0; transform: translateY(-15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-@keyframes glowPulse {
-  0% { box-shadow: 0 6px 18px rgba(0,0,0,0.2), 0 0 8px rgba(79,172,254,0.6); }
-  50% { box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 16px rgba(79,172,254,0.8); }
-  100% { box-shadow: 0 6px 18px rgba(0,0,0,0.2), 0 0 8px rgba(79,172,254,0.6); }
-}
-
 /* Body background gradient */
 body {
   font-family: 'Segoe UI', sans-serif;
@@ -53,33 +26,63 @@ body {
   to { opacity: 1; }
 }
 
-/* Header with flex layout */
+/* Unified Header Banner */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 95%;
-  max-width: 900px;
-  margin-bottom: 20px;
-  color: #fff;
-  background: rgba(0,0,0,0.25);
+  max-width: 950px;
   padding: 12px 20px;
-  border-radius: 12px;
+  border-radius: 14px;
   backdrop-filter: blur(6px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  background: linear-gradient(90deg, #ff7eb3, #ff758c, #ff9a76, #ffd76f);
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
 }
 
-/* Logo styling */
+/* Header images (logo & flag) */
 header img {
-  height: 60px;
+  height: 65px;
   border-radius: 12px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.15);
   padding: 6px;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 header img:hover {
   transform: scale(1.1) rotate(2deg);
   box-shadow: 0 6px 15px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.4);
+}
+
+/* Advanced Modern Title with Unique Banner Color */
+h2 {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 2rem;
+  text-align: center;
+  color: white;
+  padding: 14px 28px;
+  border-radius: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  animation: fadeInTitle 1s ease-out, glowPulse 3s infinite;
+}
+
+/* Title animations */
+@keyframes fadeInTitle {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowPulse {
+  0% { text-shadow: 0 0 8px rgba(255,255,255,0.7), 0 0 14px rgba(255,126,179,0.7); }
+  50% { text-shadow: 0 0 14px rgba(255,255,255,0.8), 0 0 22px rgba(255,126,179,0.9); }
+  100% { text-shadow: 0 0 8px rgba(255,255,255,0.7), 0 0 14px rgba(255,126,179,0.7); }
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* Chart container */
@@ -97,6 +100,15 @@ header img:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
+
+/* Footer */
+footer {
+  font-size: 0.9rem;
+  color: white;
+  margin-top: 15px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
 
   </style>
 </head>
