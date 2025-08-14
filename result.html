@@ -7,6 +7,19 @@
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Soft shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+img:hover {
+  transform: scale(1.05); /* Slight zoom on hover */
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+}
+
     .logo, .flag {
   height: 50px;
   border-radius: 8px;
