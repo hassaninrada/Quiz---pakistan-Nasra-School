@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <style>
   body {
     font-family: 'Segoe UI', sans-serif;
@@ -47,18 +48,18 @@
 <body>
 
 <header>
-  <img src="school_logo.png" alt="School Logo">
+  <img src="https://nasraschool.edu.pk/wp-content/uploads/2025/06/NASRA-logo-clear-002.png" alt="School Logo">
   <h1>Class-wise Student Analysis</h1>
-  <img src="pakistan_flag.png" alt="Flag">
+  <img src="https://png.pngtree.com/png-clipart/20230609/ourmid/pngtree-pakistan-png-image_7118824.png" alt="Flag">
 </header>
 
 <div class="chart-box">
-  <h2>Students Scoring 30</h2>
+  <h2>Quiz Result of top Students to Scoring 30/30</h2>
   <div id="score30Chart" style="height: 250px;"></div>
 </div>
 
 <div class="chart-box">
-  <h2>Class-wise Attempts</h2>
+  <h2>Quiz Result of Class-wise Attempts</h2>
   <canvas id="attemptChart" height="200"></canvas>
 </div>
 
@@ -100,7 +101,6 @@
     xaxis:{title:"Class"}
   }, {responsive:true});
 
-  // Make bars clickable (Score 30 chart)
   document.getElementById('score30Chart').on('plotly_click', function(data){
     const idx = data.points[0].pointIndex;
     alert(`${x[idx]}:\n${byClass30[parseInt(x[idx].replace("Class ",""))].join("\n")}`);
@@ -108,11 +108,221 @@
 
   // ===== Class-wise attempts =====
   const attemptData = [
-    { name: "Attiq", class: 7, score: 18 }, { name: "Ghania Ali", class: 7, score: 15 },
-    { name: "Muhammad hassan", class: 7, score: 24 }, { name: "Ikrash aslam", class: 7, score: 19 },
-    { name: "Lubna", class: 8, score: 26 }, { name: "Uzair-ud-Din", class: 10, score: 30 },
-    { name: "Ajwa zahra", class: 6, score: 29 }, { name: "Tehreem Iqbal", class: 9, score: 30 },
-    { name: "Maryam moeen", class: 7, score: 30 }, { name: "Hassaninrada", class: 10, score: 30 }
+     { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
+  { name: "Ghania Ali", class: 7, score: 15, date: "8/14/2025" },
+  { name: "Muhammad hassan", class: 7, score: 24, date: "8/14/2025" },
+  { name: "Ikrash aslam", class: 7, score: 19, date: "8/14/2025" },
+  { name: "Lubna", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Muhammad TIPU SIDDIQUE", class: 7, score: 22, date: "8/14/2025" },
+  { name: "Uzair-ud-Din", class: 10, score: 30, date: "8/14/2025" },
+  { name: "Sardar Mohit sing", class: 7, score: 14, date: "8/14/2025" },
+  { name: "Anusha", class: 8, score: 24, date: "8/14/2025" },
+  { name: "M.hanzala shehzad", class: 10, score: 27, date: "8/14/2025" },
+  { name: "Navia manoj", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Zainahmed", class: 7, score: 26, date: "8/14/2025" },
+  { name: "Ajwa zahra", class: 6, score: 29, date: "8/14/2025" },
+  { name: "Yashal qazi", class: 7, score: 25, date: "8/14/2025" },
+  { name: "Ruqaiyah", class: 8, score: 27, date: "8/14/2025" },
+  { name: "Hafsa umair", class: 6, score: 29, date: "8/14/2025" },
+  { name: "Alina zeeshan", class: 8, score: 25, date: "8/14/2025" },
+  { name: "Abdul Shahier", class: 10, score: 28, date: "8/14/2025" },
+  { name: "M . Ahmed M.Bilal", class: 7, score: 7, date: "8/14/2025" },
+  { name: "M.Fasihuddin", class: 8, score: 17, date: "8/14/2025" },
+  { name: "Arohi", class: 8, score: 29, date: "8/14/2025" },
+  { name: "Aliyan Siraj taimuri", class: 7, score: 18, date: "8/14/2025" },
+  { name: "Emaan Fatima", class: 8, score: 30, date: "8/14/2025" },
+  { name: "Sarfaraz", class: 8, score: 14, date: "8/14/2025" },
+  { name: "Hanzala tariq", class: 8, score: 26, date: "8/14/2025" },
+  { name: "M. Shahzain", class: 6, score: 30, date: "8/14/2025" },
+  { name: "Zainab Abdullah", class: 6, score: 30, date: "8/14/2025" },
+  { name: "Owais", class: 7, score: 27, date: "8/14/2025" },
+  { name: "Maryum talat", class: 8, score: 13, date: "8/14/2025" },
+  { name: "Sobhraj", class: 6, score: 29, date: "8/14/2025" },
+  { name: "Yashal qazi", class: 7, score: 29, date: "8/14/2025" },
+  { name: "Inshal fatima", class: 6, score: 27, date: "8/14/2025" },
+  { name: "Ajwa zahra", class: 6, score: 30, date: "8/14/2025" },
+  { name: "Ghafur ghisela", class: 10, score: 22, date: "8/14/2025" },
+  { name: "محمد انس یامین", class: 7, score: 21, date: "8/14/2025" },
+  { name: "Ruqaiyah", class: 8, score: 27, date: "8/14/2025" },
+  { name: "wareesha", class: 10, score: 27, date: "8/14/2025" },
+  { name: "Abdul Razzaq", class: 10, score: 21, date: "8/14/2025" },
+  { name: "Hussain khan", class: 9, score: 25, date: "8/14/2025" },
+  { name: "Muhammad NABEEL", class: 6, score: 27, date: "8/14/2025" },
+  { name: "Hunain m maqsood", class: 10, score: 18, date: "8/14/2025" },
+  { name: "Arsal", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Gori bai", class: 7, score: 27, date: "8/14/2025" },
+  { name: "M.Shozab", class: 6, score: 23, date: "8/14/2025" },
+  { name: "M ali", class: 7, score: 14, date: "8/14/2025" },
+  { name: "Umaima", class: 9, score: 26, date: "8/14/2025" },
+  { name: "Manal Zehra", class: 10, score: 23, date: "8/14/2025" },
+  { name: "Mahaveer", class: 9, score: 17, date: "8/14/2025" },
+  { name: "Maham", class: 9, score: 9, date: "8/14/2025" },
+  { name: "3193867846", class: 7, score: 27, date: "8/14/2025" },
+  { name: "M . Ahmed M.Bilal", class: 7, score: 12, date: "8/14/2025" },
+  { name: "..", class: 10, score: 17, date: "8/14/2025" },
+  { name: "Tehreem Iqbal", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Shehzil Siddiqui", class: 9, score: 24, date: "8/14/2025" },
+  { name: "Manal ahmed", class: 10, score: 20, date: "8/14/2025" },
+  { name: "Eshal", class: 10, score: 15, date: "8/14/2025" },
+  { name: "Tehreem fatima", class: 9, score: 25, date: "8/14/2025" },
+  { name: "Vedika", class: 9, score: 23, date: "8/14/2025" },
+  { name: "Zainab Abdul Qadir", class: 9, score: 30, date: "8/14/2025" },
+  { name: "ADYAAN", class: 9, score: 16, date: "8/14/2025" },
+  { name: "Naksh", class: 6, score: 30, date: "8/14/2025" },
+  { name: "Soumil Kingrani", class: 9, score: 27, date: "8/14/2025" },
+  { name: "Muhammad Nabeel", class: 6, score: 30, date: "8/14/2025" },
+  { name: "Yashal Siddiqui", class: 9, score: 22, date: "8/14/2025" },
+  { name: "Aliza Shoaib", class: 9, score: 14, date: "8/14/2025" },
+  { name: "Owais ali", class: 8, score: 20, date: "8/14/2025" },
+  { name: "Deepinmashwari", class: 9, score: 27, date: "8/14/2025" },
+  { name: "Anshara", class: 8, score: 27, date: "8/14/2025" },
+  { name: "3193867846", class: 7, score: 27, date: "8/14/2025" },
+  { name: "Hashir", class: 8, score: 18, date: "8/14/2025" },
+  { name: "Arnav Ramesh", class: 9, score: 28, date: "8/14/2025" },
+  { name: "Abuzer", class: 8, score: 22, date: "8/14/2025" },
+  { name: "Hassaninrada", class: 10, score: 30, date: "8/14/2025" },
+  { name: "M . Ahmed M.Bilal", class: 7, score: 17, date: "8/14/2025" },
+  { name: "Yashal Siddiqui", class: 9, score: 28, date: "8/14/2025" },
+  { name: "Afeera Akhtar", class: 8, score: 13, date: "8/14/2025" },
+  { name: "Maham", class: 7, score: 19, date: "8/14/2025" },
+  { name: "Ummehani Adnan", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Rumman ali", class: 6, score: 25, date: "8/14/2025" },
+  { name: "Eshal", class: 10, score: 27, date: "8/14/2025" },
+  { name: "Faha faisal", class: 7, score: 22, date: "8/14/2025" },
+  { name: "Shahnawaz Bugti", class: 8, score: 20, date: "8/14/2025" },
+  { name: "Maham", class: 9, score: 17, date: "8/14/2025" },
+  { name: "Ayesha Rashid", class: 7, score: 24, date: "8/14/2025" },
+{ name: "Hanzala tariq 8_c", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Hafsa Abid", class: 9, score: 26, date: "8/14/2025" },
+  { name: "Abuzer", class: 8, score: 27, date: "8/14/2025" },
+  { name: "Mohammed Bin Munazzam", class: 9, score: 26, date: "8/14/2025" },
+  { name: "Aameen Hussain", class: 6, score: 28, date: "8/14/2025" },
+  { name: "Unknown", class: 10, score: 17, date: "8/14/2025" },
+  { name: "Uroosa Mobin", class: 8, score: 28, date: "8/14/2025" },
+  { name: "M Huzaifa Faizan", class: 8, score: 29, date: "8/14/2025" },
+  { name: "Maryam Rizwan", class: 7, score: 19, date: "8/14/2025" },
+  { name: "Aalain Adnan", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Bareera Siddiqui", class: 6, score: 28, date: "8/14/2025" },
+  { name: "Sarfaraz", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Abdul Hannan", class: 6, score: 22, date: "8/14/2025" },
+  { name: "Tabeer fatima", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Zunaira Imran", class: 6, score: 13, date: "8/14/2025" },
+  { name: "Mohammed bin Munazzam", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Muhammad Zayn ul Abidin", class: 6, score: 24, date: "8/14/2025" },
+  { name: "Abdullah Masood", class: 8, score: 30, date: "8/14/2025" },
+  { name: "Hiba Saleem", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Hasnain", class: 8, score: 19, date: "8/14/2025" },
+  { name: "Arhum ali", class: 8, score: 24, date: "8/14/2025" },
+  { name: "Ayan", class: 8, score: 27, date: "8/14/2025" },
+  { name: "Liba noor", class: 7, score: 17, date: "8/14/2025" },
+  { name: "Alishba aamir", class: 9, score: 14, date: "8/14/2025" },
+  { name: "M.Shozab", class: 6, score: 21, date: "8/14/2025" },
+  { name: "Fazeel", class: 8, score: 18, date: "8/14/2025" },
+  { name: "M . Ahmed M.Bilal", class: 7, score: 19, date: "8/14/2025" },
+  { name: "Abeeha mateen", class: 6, score: 29, date: "8/14/2025" },
+  { name: "Ayman rizwan", class: 8, score: 19, date: "8/14/2025" },
+  { name: "Afzaa rehan", class: 7, score: 14, date: "8/14/2025" },
+  { name: "Maryum", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Syed Rayyan Ali", class: 6, score: 22, date: "8/14/2025" },
+  { name: "Hasnain", class: 8, score: 30, date: "8/14/2025" },
+  { name: "Nabeeha", class: 8, score: 12, date: "8/14/2025" },
+  { name: "Maryam Rizwan", class: 7, score: 28, date: "8/14/2025" },
+  { name: "Abdul hadi", class: 10, score: 21, date: "8/14/2025" },
+  { name: "M Rafay Warsi", class: 8, score: 22, date: "8/14/2025" },
+  { name: "Mehar", class: 8, score: 27, date: "8/14/2025" },
+  { name: "M.Hashim", class: 9, score: 28, date: "8/14/2025" },
+  { name: "Miss Sawera", class: 6, score: 21, date: "8/14/2025" },
+  { name: "Ayman rizwan", class: 8, score: 24, date: "8/14/2025" },
+  { name: "Mairaj sattar", class: 8, score: 21, date: "8/14/2025" },
+  { name: "Liba noor", class: 7, score: 27, date: "8/14/2025" },
+  { name: "Khansa waseem", class: 7, score: 26, date: "8/14/2025" },
+  { name: "Mesam", class: 8, score: 27, date: "8/14/2025" },
+  { name: "Syeda farwa", class: 6, score: 29, date: "8/14/2025" },
+  { name: "Hamza ali", class: 7, score: 12, date: "8/14/2025" },
+  { name: "Sara imran", class: 9, score: 12, date: "8/14/2025" },
+  { name: "Hasnain", class: 8, score: 29, date: "8/14/2025" },
+  { name: "Nabeeha", class: 8, score: 20, date: "8/14/2025" },
+  { name: "Afzaa rehan", class: 7, score: 29, date: "8/14/2025" },
+  { name: "Ali raza", class: 9, score: 20, date: "8/14/2025" },
+  { name: "Alishba aamir", class: 9, score: 23, date: "8/14/2025" },
+  { name: "Afeera Akhtar Ali", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Miss Sawera", class: 6, score: 24, date: "8/14/2025" },
+  { name: "Parkash kumar", class: 9, score: 15, date: "8/14/2025" },
+  { name: "Alishah ashok", class: 8, score: 18, date: "8/14/2025" },
+  { name: "M. Obaid raza", class: 8, score: 11, date: "8/14/2025" },
+  { name: "fizza asad", class: 7, score: 23, date: "8/14/2025" },
+  { name: "Pakiza irfan", class: 10, score: 26, date: "8/14/2025" },
+  { name: "Hassan Farhan", class: 9, score: 27, date: "8/14/2025" },
+  { name: "Gunjan", class: 8, score: 23, date: "8/14/2025" },
+  { name: "Ayman rizwan", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Khansa waseem", class: 7, score: 24, date: "8/14/2025" },
+  { name: "Azlal", class: 9, score: 17, date: "8/14/2025" },
+  { name: "Barqa", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Liba noor", class: 7, score: 29, date: "8/14/2025" },
+  { name: "Syed Fareh shah", class: 7, score: 17, date: "8/14/2025" },
+  { name: "Tahura", class: 7, score: 13, date: "8/14/2025" },
+  { name: "Maham", class: 7, score: 17, date: "8/14/2025" },
+  { name: "Vedika", class: 9, score: 24, date: "8/14/2025" },
+  { name: "M.abban khan", class: 9, score: 29, date: "8/14/2025" },
+{ name: "Adina Farhat", class: 6, score: 21, date: "8/14/2025" },
+  { name: "Idrees Huzaifa", class: 9, score: 26, date: "8/14/2025" },
+  { name: "Hassan Farhan", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Liba Noor", class: 7, score: 28, date: "8/14/2025" },
+  { name: "Tehreem Iqbal", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Mishkat Faisal", class: 10, score: 22, date: "8/14/2025" },
+  { name: "M. Obaid Raza", class: 8, score: 18, date: "8/14/2025" },
+  { name: "Hamza", class: 8, score: 30, date: "8/14/2025" },
+  { name: "Aariz Imran", class: 6, score: 25, date: "8/14/2025" },
+  { name: "Aliyan Akhtar Khan", class: 8, score: 13, date: "8/14/2025" },
+  { name: "M. Sadiq M. Shahid", class: 9, score: 28, date: "8/14/2025" },
+  { name: "Somil", class: 7, score: 20, date: "8/14/2025" },
+  { name: "Alisha Ashok", class: 8, score: 30, date: "8/14/2025" },
+  { name: "Maryam Moeen", class: 7, score: 30, date: "8/14/2025" },
+  { name: "Miss Sawera", class: 6, score: 25, date: "8/14/2025" },
+  { name: "M. Abban Khan", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Tahura", class: 7, score: 13, date: "8/14/2025" },
+  { name: "Nabeeha Asad", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Mishkat Faisal", class: 10, score: 23, date: "8/14/2025" },
+  { name: "Umm e Hani", class: 8, score: 20, date: "8/14/2025" },
+  { name: "Alishba Aamir", class: 9, score: 22, date: "8/14/2025" },
+  { name: "Rahul Kum", class: 6, score: 25, date: "8/14/2025" },
+  { name: "Unaiza Farhan", class: 9, score: 28, date: "8/14/2025" },
+  { name: "Azlal", class: 9, score: 27, date: "8/14/2025" },
+  { name: "Syed Moiz Shah", class: 10, score: 22, date: "8/14/2025" },
+  { name: "Ayan Ishaq", class: 8, score: 23, date: "8/14/2025" },
+  { name: "Anusha Ratan", class: 8, score: 23, date: "8/14/2025" },
+  { name: "Idrees Huzaifa", class: 9, score: 29, date: "8/14/2025" },
+  { name: "Arbia Fatima", class: 9, score: 22, date: "8/14/2025" },
+  { name: "Tahura Shamsi", class: 7, score: 14, date: "8/14/2025" },
+  { name: "Khansa Waseem", class: 7, score: 21, date: "8/14/2025" },
+  { name: "Hamdan Mohsin", class: 8, score: 21, date: "8/14/2025" },
+  { name: "M Zawahir", class: 7, score: 23, date: "8/14/2025" },
+  { name: "M. Affan", class: 10, score: 27, date: "8/14/2025" },
+  { name: "Furqan Tariq", class: 7, score: 17, date: "8/14/2025" },
+  { name: "Saadia Naz", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Ahmad Raza", class: 8, score: 16, date: "8/14/2025" },
+  { name: "Rayan", class: 7, score: 15, date: "8/14/2025" },
+  { name: "Hamza Shamsi", class: 9, score: 14, date: "8/14/2025" },
+  { name: "Mohammad Ibrahim Khan", class: 6, score: 23, date: "8/14/2025" },
+  { name: "Aman", class: 9, score: 25, date: "8/14/2025" },
+  { name: "Hurain", class: 9, score: 24, date: "8/14/2025" },
+  { name: "Huzaifa Idrees", class: 7, score: 29, date: "8/14/2025" },
+  { name: "Umar Israr", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Mustufa Sheraz Khan", class: 8, score: 25, date: "8/14/2025" },
+  { name: "Anusha Ratan", class: 8, score: 28, date: "8/14/2025" },
+  { name: "Abdul Rafay Kashif", class: 6, score: 30, date: "8/14/2025" },
+  { name: "Vedika", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Sudais Irshad", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Adina Farhat", class: 6, score: 30, date: "8/14/2025" },
+  { name: "Vedika Kumari", class: 9, score: 30, date: "8/14/2025" },
+  { name: "Zain", class: 10, score: 22, date: "8/14/2025" },
+  { name: "Ahmed Raza", class: 10, score: 20, date: "8/14/2025" },
+  { name: "Owais Baig", class: 10, score: 27, date: "8/14/2025" },
+  { name: "Ayan Noorani", class: 10, score: 27, date: "8/14/2025" },
+  { name: "Abiha Shahid", class: 8, score: 26, date: "8/14/2025" },
+  { name: "Maryum Imtiaz", class: 9, score: 24, date: "8/14/2025" },
+  { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" }
+  }
   ];
 
   const byClassAttempt = {};
@@ -140,6 +350,12 @@
     options: {
       responsive:true,
       plugins: {
+        datalabels: {
+          color: '#000',
+          anchor: 'end',
+          align: 'top',
+          formatter: (value) => value
+        },
         legend:{ display:false },
         tooltip: {
           callbacks: {
@@ -148,8 +364,7 @@
               return byClassAttempt[cls].join(", ");
             }
           }
-        },
-        title: { display: false }
+        }
       },
       onClick: (e, elements) => {
         if (elements.length > 0) {
@@ -159,9 +374,9 @@
         }
       },
       scales: { y: { beginAtZero:true } }
-    }
+    },
+    plugins: [ChartDataLabels]
   });
 </script>
 </body>
 </html>
-
