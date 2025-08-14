@@ -4,140 +4,77 @@
   <meta charset="utf-8" />
   <title>Students Scoring 30 by Class (Interactive)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Plotly JS (CDN) -->
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <style>
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: linear-gradient(180deg, #f7fbff 0%, #eef4ff 100%);
-      color: #0f172a;
+      font-family: Arial, sans-serif;
+      background: #f9fbff;
     }
     header {
-      padding: 16px 20px;
+      padding: 10px;
       text-align: center;
+      font-weight: bold;
       font-size: 18px;
-      font-weight: 700;
     }
     #chart {
       width: 100%;
-      max-width: 1100px;
-      height: 70vh; /* responsive for laptop & phone */
-      margin: 0 auto 24px auto;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
-    }
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: #475569;
-      padding-bottom: 18px;
-    }
-    .hint {
-      text-align: center;
-      font-size: 14px;
-      margin: 6px 12px 18px;
-      color: #334155;
+      height: 75vh;
     }
   </style>
 </head>
 <body>
   <header>Students Scoring 30 by Class (6–10)</header>
-  <div class="hint">Tip: hover or tap a bar to see student names.</div>
   <div id="chart"></div>
-  <footer>Interactive chart • Works on laptop & phone</footer>
-
   <script>
-    // ---- Your data (no Python needed) ----
     const rows = [
-      ["Uzair-ud-Din", 10, 30, "8/14/2025"],
-      ["Emaan Fatima", 8, 30, "8/14/2025"],
-      ["M. Shahzain", 6, 30, "8/14/2025"],
-      ["Zainab Abdullah", 6, 30, "8/14/2025"],
-      ["Ajwa zahra", 6, 30, "8/14/2025"],
-      ["Tehreem Iqbal", 9, 30, "8/14/2025"],
-      ["Zainab Abdul Qadir", 9, 30, "8/14/2025"],
-      ["Naksh", 6, 30, "8/14/2025"],
-      ["Muhammad Nabeel", 6, 30, "8/14/2025"],
-      ["Hassaninrada", 10, 30, "8/14/2025"],
-      ["Mohammed bin Munazzam", 9, 30, "8/14/2025"],
-      ["Abdullah Masood", 8, 30, "8/14/2025"],
-      ["Hasnain", 8, 30, "8/14/2025"],
-      ["Barqa", 9, 30, "8/14/2025"],
-      ["Hassan Farhan", 9, 30, "8/14/2025"],
-      ["Tehreem Iqbal", 9, 30, "8/14/2025"],
-      ["Hamza", 8, 30, "8/14/2025"],
-      ["Alisha ashok", 8, 30, "8/14/2025"],
-      ["Maryam moeen", 7, 30, "8/14/2025"],
-      ["M.abban khan", 9, 30, "8/14/2025"],
-      ["Hassan Farhan", 9, 30, "8/14/2025"],
-      ["Hamza", 8, 30, "8/14/2025"],
-      ["M.abban khan", 9, 30, "8/14/2025"],
-      ["Vedika", 9, 30, "8/14/2025"],
-      ["Abdul Rafay Kashif", 6, 30, "8/14/2025"],
-      ["Sudais irshad", 9, 30, "8/14/2025"],
-      ["Vedika Kumari", 9, 30, "8/14/2025"],
-      ["Adina farhat", 6, 30, "8/14/2025"],
+      ["Uzair-ud-Din", 10, 30], ["Emaan Fatima", 8, 30], ["M. Shahzain", 6, 30],
+      ["Zainab Abdullah", 6, 30], ["Ajwa zahra", 6, 30], ["Tehreem Iqbal", 9, 30],
+      ["Zainab Abdul Qadir", 9, 30], ["Naksh", 6, 30], ["Muhammad Nabeel", 6, 30],
+      ["Hassaninrada", 10, 30], ["Mohammed bin Munazzam", 9, 30], ["Abdullah Masood", 8, 30],
+      ["Hasnain", 8, 30], ["Barqa", 9, 30], ["Hassan Farhan", 9, 30], ["Tehreem Iqbal", 9, 30],
+      ["Hamza", 8, 30], ["Alisha ashok", 8, 30], ["Maryam moeen", 7, 30], ["M.abban khan", 9, 30],
+      ["Hassan Farhan", 9, 30], ["Hamza", 8, 30], ["M.abban khan", 9, 30], ["Vedika", 9, 30],
+      ["Abdul Rafay Kashif", 6, 30], ["Sudais irshad", 9, 30], ["Vedika", 9, 30],
+      ["Vedika", 9, 30], ["Vedika Kumari", 9, 30], ["Adina farhat", 6, 30], ["Adina farhat", 6, 30]
     ];
 
-    // Keep only Score = 30 and classes 6..10
-    const allowedClasses = new Set([6, 7, 8, 9, 10]);
-    const filtered = rows.filter(([name, cls, score]) => score === 30 && allowedClasses.has(cls));
-
-    // Group names by class
+    const allowedClasses = [6, 7, 8, 9, 10];
     const byClass = {};
-    for (const [name, cls] of filtered) {
-      if (!byClass[cls]) byClass[cls] = [];
-      byClass[cls].push(name);
-    }
+    rows.forEach(([name, cls, score]) => {
+      if (score === 30 && allowedClasses.includes(cls)) {
+        if (!byClass[cls]) byClass[cls] = [];
+        byClass[cls].push(name); // keep all attempts, even duplicates
+      }
+    });
 
-    // Order classes 6..10 even if empty
-    const classOrder = [6, 7, 8, 9, 10];
     const x = [];
     const y = [];
-    const hoverNames = [];
-    for (const cls of classOrder) {
+    const hoverText = [];
+    const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF"];
+
+    allowedClasses.forEach((cls, i) => {
       const names = byClass[cls] || [];
       x.push(String(cls));
       y.push(names.length);
-      // vertical list with <br> breaks
-      hoverNames.push(names.length ? names.join("<br>") : "No students");
-    }
+      hoverText.push(`<b>Class ${cls}</b><br>${names.join("<br>") || "No students"}`);
+    });
 
-    // Nice distinct colors for each class
-    const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF"];
-
-    const data = [{
+    Plotly.newPlot("chart", [{
       type: "bar",
       x,
       y,
       marker: { color: colors },
       text: y.map(String),
       textposition: "outside",
-      hovertemplate:
-        "<b>Class %{x}</b><br>" +
-        "Total: %{y}<br><br>" +
-        "<b>Students:</b><br>%{customdata}<extra></extra>",
-      customdata: hoverNames
-    }];
-
-    const layout = {
-      title: { text: "Students Scoring 30 by Class (Hover/Tap for Names)", x: 0.5 },
-      xaxis: { title: "Class", tickmode: "array", tickvals: x },
-      yaxis: { title: "Number of Students", rangemode: "tozero" },
-      margin: { l: 50, r: 20, t: 60, b: 60 },
-      bargap: 0.25
-    };
-
-    const config = { responsive: true, displaylogo: false };
-
-    Plotly.newPlot("chart", data, layout, config);
-
-    // Optional: handle window resize for better mobile fit
-    window.addEventListener("resize", () => Plotly.Plots.resize("chart"));
+      hoverinfo: "text",
+      hovertext: hoverText
+    }], {
+      title: "Students Scoring 30 by Class",
+      xaxis: { title: "Class" },
+      yaxis: { title: "Number of Attempts", rangemode: "tozero" },
+      margin: { t: 50, l: 50, r: 20, b: 50 }
+    }, { responsive: true });
   </script>
 </body>
 </html>
-
-
