@@ -54,12 +54,12 @@
 
 <div class="chart-box">
   <h2>Quiz Result: Top Students Scoring 30/30</h2>
-  <div id="score30Chart" style="height: 250px;"></div>
+  <div id="score30Chart" style="height: 300px;"></div>
 </div>
 
 <div class="chart-box">
   <h2>Quiz Result: Class-wise Attempts</h2>
-  <canvas id="attemptChart" height="200"></canvas>
+  <canvas id="attemptChart" height="150"></canvas>
 </div>
 
 <script>
@@ -328,10 +328,11 @@
   { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" }
   ];
 
+  
   const byClassAttempt = {};
-  attemptData.forEach(({ name, class: cls }) => {
-    (byClassAttempt[cls] ||= []).push(name);
-  });
+attemptData.forEach(({ class: cls }) => {
+  byClassAttempt[cls] = (byClassAttempt[cls] || 0) + 1;
+});
 
   const labels = Object.keys(byClassAttempt).sort((a,b)=>a-b);
   const counts = labels.map(cls => byClassAttempt[cls].length);
