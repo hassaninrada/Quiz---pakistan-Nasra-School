@@ -1,79 +1,100 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Class-wise Student Analysis</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #eef2f3, #8e9eab);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-    }
+<meta charset="UTF-8">
+<title>Class-wise Student Analysis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+  }
 
-    h1 {
-      color: #fff;
-      margin-bottom: 30px;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-    }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    max-width: 1000px;
+    margin-bottom: 30px;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  }
 
-    #chartContainer {
-      width: 90%;
-      max-width: 900px;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 20px 30px;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
+  header img {
+    height: 60px;
+    width: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
 
-    canvas {
-      border-radius: 15px;
-    }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7faff;
-      text-align: center;
-    }
-    header {
-      padding: 10px;
-      font-weight: bold;
-      font-size: 18px;
-      background: #eef6ff;
-    }
-    h1 {
-      color: #333;
-    }
-    #chart, #chartContainer {
-      width: 90%;
-      margin: 30px auto;
-      height: 60vh;
-    }
-   
-  </style>
+  header h1 {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 26px;
+    margin: 0;
+  }
+
+  .chart-box {
+    width: 90%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 25px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    margin-bottom: 40px;
+  }
+
+  canvas {
+    border-radius: 15px;
+  }
+
+  select {
+    margin-bottom: 20px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+</style>
 </head>
 <body>
 
-  <h1>Results of Students Scoring 30 by Class (6–10)</h1>
-  <div id="chart"></div>
+<header>
+  <img src="school_logo.png" alt="School Logo">
+  <h1>Class-wise Student Analysis (Grades 6–10)</h1>
+  <img src="pakistan_flag.png" alt="Flag">
+</header>
 
-  <h1>Result of Class-wise Student Attempts (6-10)</h1>
-  <div id="chartContainer">
-    <canvas id="classChart"></canvas>
-  </div>
+<div class="chart-box">
+  <h2>Students Scoring 30 by Class</h2>
+  <label for="classFilter">Select Classes:</label>
+  <select id="classFilter" multiple>
+    <option value="6" selected>Class 6</option>
+    <option value="7" selected>Class 7</option>
+    <option value="8" selected>Class 8</option>
+    <option value="9" selected>Class 9</option>
+    <option value="10" selected>Class 10</option>
+  </select>
+  <div id="score30Chart" style="height: 400px;"></div>
+</div>
 
-  <script>
-    // -------- Plotly chart for students scoring 30 --------
-    const rows = [
-      ["Uzair-ud-Din", 10, 30], ["Emaan Fatima", 8, 30], ["M. Shahzain", 6, 30],
+<div class="chart-box">
+  <h2>Class-wise Student Attempts</h2>
+  <canvas id="attemptChart" height="400"></canvas>
+</div>
+
+<script>
+  // ================= Plotly Chart for students scoring 30 =================
+  const rows = [
+    ["Uzair-ud-Din", 10, 30], ["Emaan Fatima", 8, 30], ["M. Shahzain", 6, 30],
       ["Zainab Abdullah", 6, 30], ["Ajwa zahra", 6, 30], ["Tehreem Iqbal", 9, 30],
       ["Zainab Abdul Qadir", 9, 30], ["Naksh", 6, 30], ["Muhammad Nabeel", 6, 30],
       ["Hassaninrada", 10, 30], ["Mohammed bin Munazzam", 9, 30], ["Abdullah Masood", 8, 30],
@@ -81,9 +102,10 @@
       ["Hamza", 8, 30], ["Alisha ashok", 8, 30], ["Maryam moeen", 7, 30], ["M.abban khan", 9, 30],
       ["Hassan Farhan", 9, 30], ["Abdul Rafay Kashif", 6, 30], ["Sudais irshad", 9, 30],
       ["Vedika Kumari", 9, 30], ["Adina farhat", 6, 30]
-    ];
+  ];
 
-    const allowedClasses = [6,7,8,9,10];
+  function plotScore30Chart(selectedClasses) {
+    const allowedClasses = selectedClasses.map(Number);
     const byClass = {};
     rows.forEach(([name, cls, score]) => {
       if (score === 30 && allowedClasses.includes(cls)) {
@@ -94,14 +116,14 @@
 
     const x = [], y = [], hoverText = [];
     const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF"];
-    allowedClasses.forEach((cls,i) => {
+    allowedClasses.forEach((cls,i)=>{
       const names = byClass[cls] || [];
-      x.push(String(cls));
+      x.push("Class " + cls);
       y.push(names.length);
       hoverText.push(`<b>Class ${cls}</b><br>${names.join("<br>") || "No students"}`);
     });
 
-    Plotly.newPlot("chart", [{
+    Plotly.newPlot("score30Chart", [{
       type:"bar",
       x, y,
       marker:{color:colors},
@@ -110,16 +132,26 @@
       hoverinfo:"text",
       hovertext:hoverText
     }], {
-      title:"Students Scoring 30 by Class",
-      xaxis:{title:"Class"},
+      margin:{t:50,l:50,r:20,b:50},
       yaxis:{title:"Number of Students", rangemode:"tozero"},
-      margin:{t:50,l:50,r:20,b:50}
+      xaxis:{title:"Class"}
     }, {responsive:true});
+  }
 
-    // -------- Chart.js for class-wise attempts --------
- 
+  // Initialize with all classes
+  const classFilter = document.getElementById("classFilter");
+  plotScore30Chart(Array.from(classFilter.selectedOptions).map(opt => opt.value));
+  classFilter.addEventListener("change", ()=>{
+    const selected = Array.from(classFilter.selectedOptions).map(opt=>opt.value);
+    plotScore30Chart(selected);
+  });
+
+  // ================= Chart.js for class-wise attempts =================
   const data = [
-     { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
+   
+
+
+ { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
   { name: "Ghania Ali", class: 7, score: 15, date: "8/14/2025" },
   { name: "Muhammad hassan", class: 7, score: 24, date: "8/14/2025" },
   { name: "Ikrash aslam", class: 7, score: 19, date: "8/14/2025" },
@@ -335,62 +367,47 @@
   { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" }
   ];
 
-  
-  // Count students per class
   const classCount = {};
-  data.forEach(row => {
-    classCount[row.class] = (classCount[row.class] || 0) + 1;
-  });
-
-  const labels = Object.keys(classCount).sort((a,b) => a-b);
+  data.forEach(row => classCount[row.class] = (classCount[row.class]||0)+1);
+  const labels = Object.keys(classCount).sort((a,b)=>a-b);
   const counts = labels.map(cls => classCount[cls]);
+  const colors2 = ["#FF9999","#66B2FF","#99FF99","#FFCC99","#C299FF"];
 
-  // Color palette
-  const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF", "#FF66B2", "#66FFCC", "#FFB266"];
-
-  const ctx = document.getElementById("classChart").getContext("2d");
+  const ctx = document.getElementById("attemptChart").getContext("2d");
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: labels.map(l => "Class " + l),
-      datasets: [{
-        label: "Number of Students Attempting",
+      labels: labels.map(l=>"Class "+l),
+      datasets:[{
+        label:"Number of Students Attempting",
         data: counts,
-        backgroundColor: colors.slice(0, labels.length),
-        borderColor: "#333",
-        borderWidth: 1
+        backgroundColor: colors2.slice(0, labels.length),
+        borderColor:"#333",
+        borderWidth:1
       }]
     },
     options: {
-      responsive: true,
+      responsive:true,
       plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: "Class-wise Student Attempts (6–10)",
-          font: { size: 18 }
+        legend:{ display:false },
+        title:{
+          display:true,
+          text:"Class-wise Student Attempts (6–10)",
+          font:{ size:18 }
         },
         tooltip: {
           callbacks: {
-            label: function(context) {
-              return context.parsed.y + " students";
-            }
+            label: ctx => ctx.parsed.y + " students"
           }
         }
       },
       scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: "Number of Students" }
-        },
-        x: {
-          title: { display: true, text: "Class" }
-        }
+        y: { beginAtZero:true, title:{ display:true, text:"Number of Students" } },
+        x: { title:{ display:true, text:"Class" } }
       }
     }
   });
-
-
 </script>
 </body>
 </html>
+
