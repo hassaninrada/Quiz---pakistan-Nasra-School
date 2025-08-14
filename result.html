@@ -341,26 +341,35 @@
   const labels = Object.keys(classCount).sort((a,b)=>a-b);
   const counts = labels.map(cls => classCount[cls]);
 
-  new Chart(document.getElementById('classChart'), {
-    type:'bar',
-    data:{
-      labels:labels.map(cls=>"Class "+cls),
-      datasets:[{
-        label:'Number of Students Attempted',
-        data:counts,
-        backgroundColor:'#4e73df'
-      }]
+    new Chart(document.getElementById('classChart'), {
+  type: 'bar',
+  data: {
+    labels: labels.map(cls => "Class " + cls),
+    datasets: [{
+      label: 'Number of Students Attempted',
+      data: counts,
+      backgroundColor: [
+        '#FF6384', // Class 6
+        '#36A2EB', // Class 7
+        '#FFCE56', // Class 8
+        '#4BC0C0', // Class 9
+        '#9966FF'  // Class 10
+      ]
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
     },
-    options:{
-      responsive:true,
-      plugins:{legend:{display:false}},
-      scales:{
-        y:{beginAtZero:true, title:{display:true,text:'Students'}},
-        x:{title:{display:true,text:'Class'}}
-      }
+    scales: {
+      y: { beginAtZero: true, title: { display: true, text: 'Students' } },
+      x: { title: { display: true, text: 'Class' } }
     }
-  });
-};
+  }
+});
+
+ 
   </script>
 
 </body>
