@@ -1,110 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Quiz Results – Charts (with Google Sheets CSV)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Class-wise Quiz Attempts</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .controls { margin-bottom: 20px; }
-    input[type="url"], button { padding: 8px; font-size: 16px; }
-    input[type="url"] { width: 60%; }
-    canvas { max-width: 100%; margin: 20px 0; }
+    body { font-family: Arial; background: #f0f8ff; padding: 20px; }
+    h2 { background: #4CAF50; color: white; padding: 10px; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #f2f2f2; }
   </style>
 </head>
 <body>
-  <h1>Quiz Results Charts</h1>
-  <div class="controls">
-    <input type="url" id="sheetUrl" placeholder="Paste Google Sheets CSV URL here"/>
-    <button id="loadSheetBtn">Load Sheet</button>
-  </div>
-  <canvas id="avgByClass"></canvas>
+  <h1>Quiz Attempts - Class Wise</h1>
+  <div id="results"></div>
 
   <script>
-    // Utility functions
-    function detectDelimiter(text) {
-      if (text.includes('\t')) return '\t';
-      if (text.includes(',')) return ',';
-      return /\s{2,}/;
-    }
-    function csvToArray(text) {
-      const delim = detectDelimiter(text);
-      return text.trim().split(/\r?\n/).map(line => line.split(delim).map(s => s.trim()));
-    }
+    const SHEET_URL = "YOUR_WEB_APP_URL"; // Replace with your Google Apps Script Web App URL
 
-    function coerceNum(v) {
-      const n = Number(String(v).replace(/[^0-9.-]/g, ''));
-      return Number.isFinite(n) ? n : null;
-    }
+    async function loadData() {
+      const res = await fetch(SHEET_URL);
+      const data = await res.json();
 
-    function aggregateAvgByClass(list) {
-      const map = new Map();
-      list.forEach(r => {
-        if (!map.has(r.class)) map.set(r.class, { sum: 0, count: 0 });
-        const m = map.get(r.class);
-        m.sum += r.score;
-        m.count += 1;
+      // Group by Class
+      const grouped = {};
+      data.forEach(item => {
+        if (!grouped[item.Class]) grouped[item.Class] = [];
+        grouped[item.Class].push(item);
       });
-      return Array.from(map.entries())
-        .map(([cls, { sum, count }]) => ({ cls, avg: sum / count }))
-        .sort((a, b) => a.cls - b.cls);
+
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      for (let cls in grouped) {
+        resultsDiv.innerHTML += `<h2>${cls}</h2>`;
+        resultsDiv.innerHTML += `<table>
+          <tr><th>Name</th><th>Score</th><th>Date</th></tr>
+          ${grouped[cls].map(s => `
+            <tr>
+              <td>${s.Name}</td>
+              <td>${s.Score}</td>
+              <td>${s.Date}</td>
+            </tr>
+          `).join('')}
+        </table>`;
+      }
     }
 
-    function filterClassesAndRemoveTop(list, classesToKeep, topToRemove) {
-      let filtered = list.filter(r => classesToKeep.includes(r.class));
-      filtered = filtered.sort((a, b) => b.score - a.score).slice(topToRemove);
-      return filtered;
-    }
-
-    function renderChart(data) {
-      const ctx = document.getElementById('avgByClass').getContext('2d');
-      if (window.avgChart) window.avgChart.destroy();
-      window.avgChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: data.map(d => `Class ${d.cls}`),
-          datasets: [{ label: 'Average Score (excl. top 10)', data: data.map(d => d.avg.toFixed(2)) }]
-        },
-        options: {
-          responsive: true,
-          scales: { y: { beginAtZero: true, max: 30 } }
-        }
-      });
-    }
-
-    // Main sheet loader
-    document.getElementById('loadSheetBtn').addEventListener('click', () => {
-      const url = document.getElementById('sheetUrl').value.trim();
-      if (!url) return alert('Please paste the published CSV URL.');
-
-      fetch(url)
-        .then(r => r.text())
-        .then(csv => {
-          const rows = csvToArray(csv);
-          const [h, ...body] = rows;
-          const H = h.map(s => s.toLowerCase());
-          const idxName = H.findIndex(s => s.includes('name'));
-          const idxClass = H.findIndex(s => s.includes('class'));
-          const idxScore = H.findIndex(s => s.includes('score'));
-          if (idxName < 0 || idxClass < 0 || idxScore < 0) {
-            return alert('CSV must contain Name, Class, and Score columns.');
-          }
-
-          const data = body.map(r => ({
-            name: r[idxName],
-            class: coerceNum(r[idxClass]),
-            score: coerceNum(r[idxScore]),
-          })).filter(r => r.class !== null && r.score !== null);
-
-          const classesToKeep = [6, 7, 8, 9, 10, 11];
-          const filtered = filterClassesAndRemoveTop(data, classesToKeep, 10);
-          const chartData = aggregateAvgByClass(filtered);
-          renderChart(chartData);
-        })
-        .catch(err => alert('Error loading CSV: ' + err));
-    });
+    loadData();
   </script>
 </body>
 </html>
+
 
