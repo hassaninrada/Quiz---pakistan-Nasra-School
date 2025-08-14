@@ -360,7 +360,6 @@ function submitQuiz() {
   .then(response => response.json())
   .then(data => {
     if(data.result === "success") {
-      alert(`Quiz submitted successfully! Your score: ${score}/${quizData.length}`);
       localStorage.removeItem("studentData"); // clear student data if needed
       setTimeout(() => window.location.href = "index.html", 3000);
     } else {
