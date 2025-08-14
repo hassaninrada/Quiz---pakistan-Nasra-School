@@ -8,108 +8,96 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     
-/* Header layout - center items evenly */
-header {
-  display: flex;
-  justify-content: space-between; /* logo - title - flag */
-  align-items: center;
-  width: 95%;
-  max-width: 900px;
-  margin: 0 auto 15px auto;
-  padding: 10px 20px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-  border-radius: 14px;
-  backdrop-filter: blur(8px);
-}
 
-/* Title styling */
-header h1 {
-  font-size: 22px;
-  font-weight: bold;
-  color: white;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  margin: 0;
-}
-
-/* Modern glow style for images */
-header img {
-  height: 60px;
-  padding: 8px 12px;
-  border-radius: 14px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 
-    0 4px 15px rgba(0,0,0,0.25),
-    0 0 10px rgba(0, 255, 170, 0.5);
-  transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
-  animation: pulseGlow 3s infinite ease-in-out;
-}
-
-/* Hover floating glow effect */
-header img:hover {
-  transform: translateY(-6px) scale(1.1);
-  filter: brightness(1.15) saturate(1.2);
-  box-shadow: 
-    0 8px 25px rgba(0,0,0,0.35),
-    0 0 18px rgba(0, 255, 170, 0.7);
-}
-
-/* Glow animation */
-@keyframes pulseGlow {
-  0% { box-shadow: 0 4px 15px rgba(0,0,0,0.25), 0 0 10px rgba(0, 255, 170, 0.5); }
-  50% { box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 18px rgba(0, 255, 170, 0.8); }
-  100% { box-shadow: 0 4px 15px rgba(0,0,0,0.25), 0 0 10px rgba(0, 255, 170, 0.5); }
-}
-
-    h2 {
+   /* Advanced Modern Title */
+h2 {
   font-family: 'Segoe UI', sans-serif;
-  font-size: 1.6rem;
+  font-size: 2rem;
   text-align: center;
   color: white;
   background: linear-gradient(90deg, #4facfe, #00f2fe);
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  padding: 14px 28px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
   margin-bottom: 20px;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   text-transform: uppercase;
+  animation: fadeInTitle 1s ease-out, glowPulse 3s infinite;
 }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 95%;
-      max-width: 800px;
-      margin-bottom: 15px;
-      color: #fff;
-    }
-    header img {
-      height: 50px;
-      border-radius: 8px;
-    }
-    header h1 {
-      font-size: 20px;
-      text-align: center;
-      margin: 0;
-    }
-    .chart-box {
-      width: 95%;
-      max-width: 800px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
+/* Title animations */
+@keyframes fadeInTitle {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowPulse {
+  0% { box-shadow: 0 6px 18px rgba(0,0,0,0.2), 0 0 8px rgba(79,172,254,0.6); }
+  50% { box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 16px rgba(79,172,254,0.8); }
+  100% { box-shadow: 0 6px 18px rgba(0,0,0,0.2), 0 0 8px rgba(79,172,254,0.6); }
+}
+
+/* Body background gradient */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeInBody 1s ease-in;
+}
+
+@keyframes fadeInBody {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Header with flex layout */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 95%;
+  max-width: 900px;
+  margin-bottom: 20px;
+  color: #fff;
+  background: rgba(0,0,0,0.25);
+  padding: 12px 20px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Logo styling */
+header img {
+  height: 60px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.1);
+  padding: 6px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+header img:hover {
+  transform: scale(1.1) rotate(2deg);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.4);
+}
+
+/* Chart container */
+.chart-box {
+  width: 95%;
+  max-width: 900px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 18px;
+  border-radius: 14px;
+  margin-bottom: 25px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.chart-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
   </style>
 </head>
 <body>
