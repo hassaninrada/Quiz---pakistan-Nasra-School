@@ -1,80 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>Students Scoring 30 by Class (Interactive)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <meta charset="UTF-8">
+  <title>Class-wise Attempts</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f9fbff;
-    }
-    header {
-      padding: 10px;
       text-align: center;
-      font-weight: bold;
-      font-size: 18px;
+      background: #f7faff;
     }
-    #chart {
-      width: 100%;
-      height: 75vh;
+    h1 {
+      color: #333;
+    }
+    #chartContainer {
+      width: 80%;
+      margin: auto;
     }
   </style>
 </head>
 <body>
-  <header>Students Scoring 30 by Class (6–10)</header>
-  <div id="chart"></div>
+
+  <h1>Class-wise Student Attempts</h1>
+  <div id="chartContainer">
+    <canvas id="classChart"></canvas>
+  </div>
+
   <script>
-    const rows = [
-      ["Uzair-ud-Din", 10, 30], ["Emaan Fatima", 8, 30], ["M. Shahzain", 6, 30],
-      ["Zainab Abdullah", 6, 30], ["Ajwa zahra", 6, 30], ["Tehreem Iqbal", 9, 30],
-      ["Zainab Abdul Qadir", 9, 30], ["Naksh", 6, 30], ["Muhammad Nabeel", 6, 30],
-      ["Hassaninrada", 10, 30], ["Mohammed bin Munazzam", 9, 30], ["Abdullah Masood", 8, 30],
-      ["Hasnain", 8, 30], ["Barqa", 9, 30], ["Hassan Farhan", 9, 30], ["Tehreem Iqbal", 9, 30],
-      ["Hamza", 8, 30], ["Alisha ashok", 8, 30], ["Maryam moeen", 7, 30], ["M.abban khan", 9, 30],
-      ["Hassan Farhan", 9, 30], ["Hamza", 8, 30], ["M.abban khan", 9, 30], ["Vedika", 9, 30],
-      ["Abdul Rafay Kashif", 6, 30], ["Sudais irshad", 9, 30], ["Vedika", 9, 30],
-      ["Vedika", 9, 30], ["Vedika Kumari", 9, 30], ["Adina farhat", 6, 30], ["Adina farhat", 6, 30]
+    // Your data (Name, Class, Score, Date)
+    const data = [
+      {Name:"Attiq",Class:7,Score:18,Date:"8/14/2025"},
+      {Name:"Ghania Ali",Class:7,Score:15,Date:"8/14/2025"},
+      {Name:"Muhammad hassan",Class:7,Score:24,Date:"8/14/2025"},
+      {Name:"Ikrash aslam",Class:7,Score:19,Date:"8/14/2025"},
+      {Name:"Lubna",Class:8,Score:26,Date:"8/14/2025"},
+      {Name:"Muhammad TIPU SIDDIQUE",Class:7,Score:22,Date:"8/14/2025"},
+      {Name:"Uzair-ud-Din",Class:10,Score:30,Date:"8/14/2025"},
+      // --- You can paste your full dataset here ---
     ];
 
-    const allowedClasses = [6, 7, 8, 9, 10];
-    const byClass = {};
-    rows.forEach(([name, cls, score]) => {
-      if (score === 30 && allowedClasses.includes(cls)) {
-        if (!byClass[cls]) byClass[cls] = [];
-        byClass[cls].push(name); // keep all attempts, even duplicates
+    // Count attempts per class
+    const classCount = {};
+    data.forEach(row => {
+      if (!classCount[row.Class]) {
+        classCount[row.Class] = 0;
+      }
+      classCount[row.Class]++;
+    });
+
+    // Prepare chart data
+    const labels = Object.keys(classCount).sort((a,b)=>a-b);
+    const counts = labels.map(cls => classCount[cls]);
+
+    // Create chart
+    new Chart(document.getElementById('classChart'), {
+      type: 'bar',
+      data: {
+        labels: labels.map(cls => "Class " + cls),
+        datasets: [{
+          label: 'Number of Students Attempted',
+          data: counts,
+          backgroundColor: '#4e73df'
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Students' }
+          },
+          x: {
+            title: { display: true, text: 'Class' }
+          }
+        }
       }
     });
-
-    const x = [];
-    const y = [];
-    const hoverText = [];
-    const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF"];
-
-    allowedClasses.forEach((cls, i) => {
-      const names = byClass[cls] || [];
-      x.push(String(cls));
-      y.push(names.length);
-      hoverText.push(`<b>Class ${cls}</b><br>${names.join("<br>") || "No students"}`);
-    });
-
-    Plotly.newPlot("chart", [{
-      type: "bar",
-      x,
-      y,
-      marker: { color: colors },
-      text: y.map(String),
-      textposition: "outside",
-      hoverinfo: "text",
-      hovertext: hoverText
-    }], {
-      title: "Students Scoring 30 by Class",
-      xaxis: { title: "Class" },
-      yaxis: { title: "Number of Attempts", rangemode: "tozero" },
-      margin: { t: 50, l: 50, r: 20, b: 50 }
-    }, { responsive: true });
   </script>
+
 </body>
 </html>
