@@ -118,16 +118,49 @@ h2 {
 
 <style>
   footer {
-    margin-top: auto;
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-    color: white;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 6px;
-    width: 95%;
-    max-width: 800px;
-  }
+  margin-top: auto;
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(90deg, rgba(79,172,254,0.9), rgba(0,242,254,0.9));
+  border-radius: 10px;
+  width: 95%;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glow effect on text */
+footer span {
+  display: inline-block;
+  animation: footerGlow 3s ease-in-out infinite;
+}
+
+/* Footer gradient animation */
+footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -50%;
+  width: 200%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: footerShine 4s infinite;
+}
+
+@keyframes footerShine {
+  0% { left: -50%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+@keyframes footerGlow {
+  0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #4facfe; }
+  50% { text-shadow: 0 0 10px #fff, 0 0 20px #00f2fe; }
+}
+
 </style>
 
 </div>
@@ -140,17 +173,50 @@ h2 {
 </footer>
 
 <style>
-  footer {
-    margin-top: auto;
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-    color: white;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 6px;
-    width: 95%;
-    max-width: 800px;
-  }
+ footer {
+  margin-top: auto;
+  padding: 14px 20px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(90deg, rgba(79,172,254,0.9), rgba(0,242,254,0.9));
+  border-radius: 10px;
+  width: 95%;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glow effect on text */
+footer span {
+  display: inline-block;
+  animation: footerGlow 3s ease-in-out infinite;
+}
+
+/* Footer gradient animation */
+footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -50%;
+  width: 200%; height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: footerShine 4s infinite;
+}
+
+@keyframes footerShine {
+  0% { left: -50%; }
+  50% { left: 100%; }
+  100% { left: 100%; }
+}
+
+@keyframes footerGlow {
+  0%, 100% { text-shadow: 0 0 5px #fff, 0 0 10px #4facfe; }
+  50% { text-shadow: 0 0 10px #fff, 0 0 20px #00f2fe; }
+}
+
 </style>
 
 </div>
