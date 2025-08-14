@@ -394,42 +394,62 @@
   ];
 
   // Count students per class
+ <script>
+  // Count students per class
   const classCount = {};
   data.forEach(row => {
     classCount[row.class] = (classCount[row.class] || 0) + 1;
   });
 
-  const labels = Object.keys(classCount).sort((a,b)=>a-b);
+  const labels = Object.keys(classCount).sort((a,b) => a-b);
   const counts = labels.map(cls => classCount[cls]);
 
   // Color palette
-  const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF", "#FF66B2", "#66FFB2", "#9966FF", "#FF9966", "#33CCFF"];
-  const barColors = labels.map((_, i) => colors[i % colors.length]);
+  const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF", "#FF66B2", "#66FFCC", "#FFB266"];
 
-  // Create Chart.js bar chart
-  new Chart(document.getElementById('classChart'), {
-    type:'bar',
-    data:{
-      labels: labels.map(cls => "Class " + cls),
-      datasets:[{
-        label:'Number of Students Attempted',
+  const ctx = document.getElementById("classChart").getContext("2d");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: labels.map(l => "Class " + l),
+      datasets: [{
+        label: "Number of Students Attempting",
         data: counts,
-        backgroundColor: barColors
+        backgroundColor: colors.slice(0, labels.length),
+        borderColor: "#333",
+        borderWidth: 1
       }]
     },
-    options:{
-      responsive:true,
-      plugins:{
-        legend:{ display:false },
-        tooltip: { callbacks: { label: function(context) { return context.raw + " students"; } } }
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Class-wise Student Attempts (6–10)",
+          font: { size: 18 }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.parsed.y + " students";
+            }
+          }
+        }
       },
-      scales:{
-        y:{ beginAtZero:true, title:{ display:true, text:'Students' } },
-        x:{ title:{ display:true, text:'Class' } }
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: "Number of Students" }
+        },
+        x: {
+          title: { display: true, text: "Class" }
+        }
       }
     }
   });
-};
+</script>
+
      // Example JS to switch alignment dynamically
     const leftLogo = document.querySelector('.left');
     const rightLogo = document.querySelector('.right');
