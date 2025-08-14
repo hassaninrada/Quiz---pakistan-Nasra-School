@@ -1,4 +1,4 @@
-<!DOCTYPE html>  make its css more intreactive 
+<!DOCTYPE html>  
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -117,8 +117,12 @@
     }, {responsive:true});
 
     // -------- Chart.js for class-wise attempts --------
-  window.onload = function() {
-  const data = [  { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
+  <canvas id="classChart"></canvas>
+
+<script>
+window.onload = function() {
+  const data = [
+     { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
   { name: "Ghania Ali", class: 7, score: 15, date: "8/14/2025" },
   { name: "Muhammad hassan", class: 7, score: 24, date: "8/14/2025" },
   { name: "Ikrash aslam", class: 7, score: 19, date: "8/14/2025" },
@@ -331,8 +335,10 @@
   { name: "Ayan Noorani", class: 10, score: 27, date: "8/14/2025" },
   { name: "Abiha Shahid", class: 8, score: 26, date: "8/14/2025" },
   { name: "Maryum Imtiaz", class: 9, score: 24, date: "8/14/2025" },
-  { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" } ];
+  { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" }
+  ];
 
+  // Count students per class
   const classCount = {};
   data.forEach(row => {
     classCount[row.class] = (classCount[row.class] || 0) + 1;
@@ -341,22 +347,30 @@
   const labels = Object.keys(classCount).sort((a,b)=>a-b);
   const counts = labels.map(cls => classCount[cls]);
 
+  // Color palette
+  const colors = ["#FF9999", "#66B2FF", "#99FF99", "#FFCC99", "#C299FF", "#FF66B2", "#66FFB2", "#9966FF", "#FF9966", "#33CCFF"];
+  const barColors = labels.map((_, i) => colors[i % colors.length]);
+
+  // Create Chart.js bar chart
   new Chart(document.getElementById('classChart'), {
     type:'bar',
     data:{
-      labels:labels.map(cls=>"Class "+cls),
+      labels: labels.map(cls => "Class " + cls),
       datasets:[{
         label:'Number of Students Attempted',
-        data:counts,
-        backgroundColor:'#4e73df'
+        data: counts,
+        backgroundColor: barColors
       }]
     },
     options:{
       responsive:true,
-      plugins:{legend:{display:false}},
+      plugins:{
+        legend:{ display:false },
+        tooltip: { callbacks: { label: function(context) { return context.raw + " students"; } } }
+      },
       scales:{
-        y:{beginAtZero:true, title:{display:true,text:'Students'}},
-        x:{title:{display:true,text:'Class'}}
+        y:{ beginAtZero:true, title:{ display:true, text:'Students' } },
+        x:{ title:{ display:true, text:'Class' } }
       }
     }
   });
