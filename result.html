@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -56,16 +57,73 @@
       margin: 30px auto;
       height: 60vh;
     }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f0f4f8;
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 90%;
+      max-width: 1200px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+
+    .logo-container img {
+      height: 80px;
+      width: auto;
+      transition: all 0.3s ease;
+    }
+
+    /* Mobile styles */
+    @media (max-width: 768px) {
+      .logo-container {
+        flex-direction: column;
+      }
+
+      .logo-container img {
+        margin: 10px 0;
+        height: 60px;
+      }
+    }
+
+    /* Optional: JS-controlled alignment classes */
+    .left {
+      order: 0;
+    }
+
+    .right {
+      order: 1;
+    }
   </style>
 </head>
 <body>
 
-  <header>Class-wise Student Analysis</header>
+<div class="logo-container">
+    <img src="https://nasraschool.edu.pk/wp-content/uploads/2025/06/NASRA-logo-clear-002.png" alt="Nasra Logo Left" class="left">
+    <img src="https://png.pngtree.com/png-clipart/20230609/ourmid/pngtree-pakistan-png-image_7118824.png" alt="Nasra Logo Right" class="right">
+  </div>
 
-  <h1>Students Scoring 30 by Class (6–10)</h1>
+  <h1>Results of Students Scoring 30 by Class (6–10)</h1>
   <div id="chart"></div>
 
-  <h1>Class-wise Student Attempts</h1>
+  <h1>Result of Class-wise Student Attempts (6-10)</h1>
   <div id="chartContainer">
     <canvas id="classChart"></canvas>
   </div>
@@ -372,6 +430,18 @@ window.onload = function() {
     }
   });
 };
+     // Example JS to switch alignment dynamically
+    const leftLogo = document.querySelector('.left');
+    const rightLogo = document.querySelector('.right');
+
+    // On click, swap left and right logos
+    leftLogo.addEventListener('click', () => {
+      leftLogo.classList.toggle('right');
+      leftLogo.classList.toggle('left');
+
+      rightLogo.classList.toggle('left');
+      rightLogo.classList.toggle('right');
+    });
 </script>
 </body>
 </html>
