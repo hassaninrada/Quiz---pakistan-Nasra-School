@@ -75,40 +75,38 @@
   ];
 
   // Students Scoring 30
-  const byClass30 = {};
-  rows.filter(r => r[2] === 30).forEach(([name, cls]) => {
-    (byClass30[cls] ||= []).push(name);
-  });
+const byClass30 = {};
+rows.filter(r => r[2] === 30).forEach(([name, cls]) => {
+  (byClass30[cls] ||= []).push(name);
+});
 
-  const x = [], y = [], hoverText = [], barText = [];
-  Object.keys(byClass30).sort((a,b)=>a-b).forEach(cls => {
-    const count = byClass30[cls].length;
-    x.push("Class " + cls);
-    y.push(count);
-    hoverText.push(byClass30[cls].join("<br>"));
-    barText.push(`${count} students`);
-  });
+const x = [], y = [], hoverText = [];
+Object.keys(byClass30).sort((a, b) => a - b).forEach(cls => {
+  const count = byClass30[cls].length;
+  x.push("Class " + cls);
+  y.push(count);
+  hoverText.push(byClass30[cls].join("<br>"));
+});
 
-  Plotly.newPlot("score30Chart", [{
-    type: "bar",
-    x, y,
-    marker: { color: "#66B2FF" },
-    text: barText,
-    textposition: "outside",
-    hoverinfo: "text",
-    hovertext: hoverText
-  }], {
-    margin: { t: 30, l: 40, r: 20, b: 40 },
-    yaxis: { title: "Students", rangemode: "tozero" },
-    xaxis: { title: "Class" }
-  }, { responsive: true });
+Plotly.newPlot("score30Chart", [{
+  type: "bar",
+  x, y,
+  marker: { color: "#66B2FF" },
+  hoverinfo: "text",
+  hovertext: hoverText
+}], {
+  margin: { t: 30, l: 40, r: 20, b: 40 },
+  yaxis: { title: "Students", rangemode: "tozero" },
+  xaxis: { title: "Class" }
+}, { responsive: true });
 
-  document.getElementById('score30Chart').on('plotly_click', function(data){
-    const idx = data.points[0].pointIndex;
-    const clsNum = parseInt(x[idx].replace("Class ",""));
-    const students = byClass30[clsNum];
-    alert(`Class ${clsNum} — ${students.length} Students:\n${students.join("\n")}`);
-  });
+document.getElementById('score30Chart').on('plotly_click', function(data) {
+  const idx = data.points[0].pointIndex;
+  const clsNum = parseInt(x[idx].replace("Class ", ""));
+  const students = byClass30[clsNum];
+  alert(`Class ${clsNum} — ${students.length} Students:\n${students.join("\n")}`);
+});
+
 
   // Class-wise Attempts
   const attemptData = [
@@ -329,53 +327,49 @@
   ];
 
   
-  const byClassAttempt = {};
+ const byClassAttempt = {};
 attemptData.forEach(({ class: cls }) => {
   byClassAttempt[cls] = (byClassAttempt[cls] || 0) + 1;
 });
 
-  const labels = Object.keys(byClassAttempt).sort((a,b)=>a-b);
-  const counts = labels.map(cls => byClassAttempt[cls].length);
+const labels = Object.keys(byClassAttempt).sort((a, b) => a - b);
+const counts = labels.map(cls => byClassAttempt[cls]);
 
-  const ctx = document.getElementById("attemptChart").getContext("2d");
-  new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: labels.map(l => "Class " + l),
-      datasets: [{
-        label: "Student Attempts",
-        data: counts,
-        backgroundColor: "#FF9999",
-        borderColor: "#333",
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: (tooltipItem) => {
-              const cls = parseInt(labels[tooltipItem.dataIndex]);
-              return `${counts[tooltipItem.dataIndex]} students: ${byClassAttempt[cls].join(", ")}`;
-            }
-          }
+const ctx = document.getElementById("attemptChart").getContext("2d");
+new Chart(ctx, {
+  type: "bar",
+  data: {
+    labels: labels.map(l => "Class " + l),
+    datasets: [{
+      label: "Student Attempts",
+      data: counts,
+      backgroundColor: "#FF9999",
+      borderColor: "#333",
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (tooltipItem) => `${counts[tooltipItem.dataIndex]} students`
         }
-      },
-      onClick: (e, elements) => {
-        if (elements.length) {
-          const idx = elements[0].index;
-          const cls = parseInt(labels[idx]);
-          const students = byClassAttempt[cls];
-          alert(`Class ${cls} — ${students.length} Students:\n${students.join("\n")}`);
-        }
-      },
-      scales: {
-        y: { beginAtZero: true, ticks: { precision: 0 } }
       }
+    },
+    onClick: (e, elements) => {
+      if (elements.length) {
+        const idx = elements[0].index;
+        alert(`Class ${labels[idx]} — ${counts[idx]} Students`);
+      }
+    },
+    scales: {
+      y: { beginAtZero: true, ticks: { precision: 0 } }
     }
-  });
+  }
+});
+
 </script>
 </body>
 </html>
