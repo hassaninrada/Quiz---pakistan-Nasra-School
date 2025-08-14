@@ -7,33 +7,39 @@
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-  /* Global image style for responsiveness */
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 12px;
-  backdrop-filter: blur(5px);
-  transition: all 0.35s ease;
-}
-
-/* Special style for your logos */
+/* Base logo/flag style */
 .logo, .flag {
-  height: 55px;
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), 
-              0 0 12px rgba(102, 175, 255, 0.4); /* Soft blue glow */
+  height: 60px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 
+    0 4px 15px rgba(0,0,0,0.25),
+    0 0 10px rgba(0, 255, 170, 0.5);
+  transition: transform 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
 }
 
-/* Hover effect for interactivity */
+/* Hover effect — floating with glow */
 .logo:hover, .flag:hover {
-  transform: scale(1.12) rotate(1deg);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25),
-              0 0 16px rgba(102, 175, 255, 0.6);
-  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-6px) scale(1.1);
+  filter: brightness(1.15) saturate(1.2);
+  box-shadow: 
+    0 8px 25px rgba(0,0,0,0.35),
+    0 0 18px rgba(0, 255, 170, 0.7);
 }
+
+/* Optional pulse animation for continuous modern effect */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 4px 15px rgba(0,0,0,0.25), 0 0 10px rgba(0, 255, 170, 0.5); }
+  50% { box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 18px rgba(0, 255, 170, 0.8); }
+  100% { box-shadow: 0 4px 15px rgba(0,0,0,0.25), 0 0 10px rgba(0, 255, 170, 0.5); }
+}
+
+.logo, .flag {
+  animation: pulseGlow 3s infinite ease-in-out;
+}
+
 
     h2 {
   font-family: 'Segoe UI', sans-serif;
