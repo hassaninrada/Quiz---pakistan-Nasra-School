@@ -333,7 +333,7 @@
   { name: "Maryum Imtiaz", class: 9, score: 24, date: "8/14/2025" },
   { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" } ];
 
-  const classCount = {};
+const classCount = {};
   data.forEach(row => {
     classCount[row.class] = (classCount[row.class] || 0) + 1;
   });
@@ -341,33 +341,42 @@
   const labels = Object.keys(classCount).sort((a,b)=>a-b);
   const counts = labels.map(cls => classCount[cls]);
 
-    new Chart(document.getElementById('classChart'), {
-  type: 'bar',
-  data: {
-    labels: labels.map(cls => "Class " + cls),
-    datasets: [{
-      label: 'Number of Students Attempted',
-      data: counts,
-      backgroundColor: [
-        '#FF6384', // Class 6
-        '#36A2EB', // Class 7
-        '#FFCE56', // Class 8
-        '#4BC0C0', // Class 9
-        '#9966FF'  // Class 10
-      ]
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
+  // Generate random colors for bars
+  const backgroundColors = labels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
+
+  new Chart(document.getElementById('classChart'), {
+    type: 'bar',
+    data: {
+      labels: labels.map(cls => "Class " + cls),
+      datasets: [{
+        label: 'Number of Students Attempted',
+        data: counts,
+        backgroundColor: backgroundColors
+      }]
     },
-    scales: {
-      y: { beginAtZero: true, title: { display: true, text: 'Students' } },
-      x: { title: { display: true, text: 'Class' } }
-    }
-  }
-});
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          color: '#000',
+          font: { weight: 'bold', size: 14 }
+        }
+      },
+      scales: {
+        y: { 
+          beginAtZero: true, 
+          title: { display: true, text: 'Students' } 
+        },
+        x: { 
+          title: { display: true, text: 'Class' } 
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
 
  
   </script>
