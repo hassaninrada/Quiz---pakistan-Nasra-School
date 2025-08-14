@@ -1,99 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Results</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Quiz Results – Charts (with Google Sheets CSV)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .controls { margin-bottom: 20px; }
+    input[type="url"], button { padding: 8px; font-size: 16px; }
+    input[type="url"] { width: 60%; }
+    canvas { max-width: 100%; margin: 20px 0; }
+  </style>
 </head>
-<body class="result-page">
+<body>
+  <h1>Quiz Results Charts</h1>
+  <div class="controls">
+    <input type="url" id="sheetUrl" placeholder="Paste Google Sheets CSV URL here"/>
+    <button id="loadSheetBtn">Load Sheet</button>
+  </div>
+  <canvas id="avgByClass"></canvas>
 
-<!-- Nasra School Logo (Top-Left) -->
-<div class="nasra-logo">
-  <img src="https://nasraschool.edu.pk/wp-content/uploads/2024/03/logo.webp" alt="Nasra Logo" />
-</div>
-
-<!-- Pakistan Flag (Top-Right) -->
-<div class="pakistan-flag">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Flag_of_Pakistan.svg" alt="Pakistan Flag" />
-</div>
-
-<div class="container">
-  <h2>Quiz Results</h2>
-  <select id="classFilter" onchange="filterResults()">
-    <option value="all">All Classes</option>
-    <option value="6">Class 6</option>
-    <option value="7">Class 7</option>
-    <option value="8">Class 8</option>
-    <option value="9">Class 9</option>
-    <option value="10">Class 10</option>
-  </select>
-  <canvas id="barChart"></canvas>
-  <button onclick="downloadCSV()">Download CSV</button>
-  <button onclick="confirmDeleteAll()">Delete All</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  const ctx = document.getElementById("barChart").getContext("2d");
-  let chart;
-
-  function filterResults() {
-    const filter = document.getElementById("classFilter").value;
-    const allResults = JSON.parse(localStorage.getItem("quizResults") || "[]");
-    const filtered = filter === "all" ? allResults : allResults.filter(r => r.class === filter);
-    renderChart(filtered);
-  }
-
-  function renderChart(results) {
-    const labels = results.map(r => r.name);
-    const scores = results.map(r => r.score);
-
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "Score",
-          data: scores,
-          backgroundColor: "rgba(75, 192, 192, 0.5)",
-          borderColor: "rgba(75, 192, 192, 1)",
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  }
-
-  function downloadCSV() {
-    const data = JSON.parse(localStorage.getItem("quizResults") || "[]");
-    let csv = "Name,Class,Score,Total,Time\n";
-    data.forEach(d => {
-      csv += `${d.name},${d.class},${d.score},${d.total},${d.time}\n`;
-    });
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "quiz_results.csv";
-    a.click();
-  }
-
-  function confirmDeleteAll() {
-    if (confirm("Are you sure you want to delete ALL results?")) {
-      localStorage.removeItem("quizResults");
-      location.reload();
+  <script>
+    // Utility functions
+    function detectDelimiter(text) {
+      if (text.includes('\t')) return '\t';
+      if (text.includes(',')) return ',';
+      return /\s{2,}/;
     }
-  }
+    function csvToArray(text) {
+      const delim = detectDelimiter(text);
+      return text.trim().split(/\r?\n/).map(line => line.split(delim).map(s => s.trim()));
+    }
 
-  // Initialize chart on page load
-  filterResults();
-</script>
+    function coerceNum(v) {
+      const n = Number(String(v).replace(/[^0-9.-]/g, ''));
+      return Number.isFinite(n) ? n : null;
+    }
 
+    function aggregateAvgByClass(list) {
+      const map = new Map();
+      list.forEach(r => {
+        if (!map.has(r.class)) map.set(r.class, { sum: 0, count: 0 });
+        const m = map.get(r.class);
+        m.sum += r.score;
+        m.count += 1;
+      });
+      return Array.from(map.entries())
+        .map(([cls, { sum, count }]) => ({ cls, avg: sum / count }))
+        .sort((a, b) => a.cls - b.cls);
+    }
+
+    function filterClassesAndRemoveTop(list, classesToKeep, topToRemove) {
+      let filtered = list.filter(r => classesToKeep.includes(r.class));
+      filtered = filtered.sort((a, b) => b.score - a.score).slice(topToRemove);
+      return filtered;
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById('avgByClass').getContext('2d');
+      if (window.avgChart) window.avgChart.destroy();
+      window.avgChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data.map(d => `Class ${d.cls}`),
+          datasets: [{ label: 'Average Score (excl. top 10)', data: data.map(d => d.avg.toFixed(2)) }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true, max: 30 } }
+        }
+      });
+    }
+
+    // Main sheet loader
+    document.getElementById('loadSheetBtn').addEventListener('click', () => {
+      const url = document.getElementById('sheetUrl').value.trim();
+      if (!url) return alert('Please paste the published CSV URL.');
+
+      fetch(url)
+        .then(r => r.text())
+        .then(csv => {
+          const rows = csvToArray(csv);
+          const [h, ...body] = rows;
+          const H = h.map(s => s.toLowerCase());
+          const idxName = H.findIndex(s => s.includes('name'));
+          const idxClass = H.findIndex(s => s.includes('class'));
+          const idxScore = H.findIndex(s => s.includes('score'));
+          if (idxName < 0 || idxClass < 0 || idxScore < 0) {
+            return alert('CSV must contain Name, Class, and Score columns.');
+          }
+
+          const data = body.map(r => ({
+            name: r[idxName],
+            class: coerceNum(r[idxClass]),
+            score: coerceNum(r[idxScore]),
+          })).filter(r => r.class !== null && r.score !== null);
+
+          const classesToKeep = [6, 7, 8, 9, 10, 11];
+          const filtered = filterClassesAndRemoveTop(data, classesToKeep, 10);
+          const chartData = aggregateAvgByClass(filtered);
+          renderChart(chartData);
+        })
+        .catch(err => alert('Error loading CSV: ' + err));
+    });
+  </script>
 </body>
 </html>
+
