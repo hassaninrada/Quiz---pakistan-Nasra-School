@@ -1,114 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Class-wise Student Analysis</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-<style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #74ebd5, #ACB6E5);
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 95%;
-    max-width: 800px;
-    margin-bottom: 15px;
-    color: #fff;
-  }
-  header img {
-    height: 50px;
-    border-radius: 8px;
-  }
-  header h1 {
-    font-size: 20px;
-    text-align: center;
-    margin: 0;
-  }
-  .chart-box {
-    width: 95%;
-    max-width: 800px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Class-wise Student Analysis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 95%;
+      max-width: 800px;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    header img {
+      height: 50px;
+      border-radius: 8px;
+    }
+    header h1 {
+      font-size: 20px;
+      text-align: center;
+      margin: 0;
+    }
+    .chart-box {
+      width: 95%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
 
 <header>
   <img src="https://nasraschool.edu.pk/wp-content/uploads/2025/06/NASRA-logo-clear-002.png" alt="School Logo">
   <h1>Class-wise Student Analysis</h1>
-  <img src="https://png.pngtree.com/png-clipart/20230609/ourmid/pngtree-pakistan-png-image_7118824.png" alt="Flag">
+  <img src="https://png.pngtree.com/png-clipart/20230609/ourmid/pngtree-pakistan-png-image_7118824.png" alt="Pakistan Flag">
 </header>
 
 <div class="chart-box">
-  <h2>Quiz Result of top Students to Scoring 30/30</h2>
+  <h2>Quiz Result: Top Students Scoring 30/30</h2>
   <div id="score30Chart" style="height: 250px;"></div>
 </div>
 
 <div class="chart-box">
-  <h2>Quiz Result of Class-wise Attempts</h2>
+  <h2>Quiz Result: Class-wise Attempts</h2>
   <canvas id="attemptChart" height="200"></canvas>
 </div>
 
 <script>
   const rows = [
-    ["Uzair-ud-Din",10,30], ["Emaan Fatima",8,30], ["M. Shahzain",6,30], ["Zainab Abdullah",6,30],
-    ["Ajwa zahra",6,30], ["Tehreem Iqbal",9,30], ["Zainab Abdul Qadir",9,30], ["Naksh",6,30],
-    ["Muhammad Nabeel",6,30], ["Hassaninrada",10,30], ["Mohammed bin Munazzam",9,30], ["Abdullah Masood",8,30],
-    ["Hasnain",8,30], ["Barqa",9,30], ["Hassan Farhan",9,30], ["Hamza",8,30], ["Alisha ashok",8,30],
-    ["Maryam moeen",7,30], ["M.abban khan",9,30], ["Abdul Rafay Kashif",6,30], ["Sudais irshad",9,30],
-    ["Vedika Kumari",9,30], ["Adina farhat",6,30]
+    ["Uzair-ud-Din",10,30], ["Emaan Fatima",8,30], ["M. Shahzain",6,30],
+    ["Zainab Abdullah",6,30], ["Ajwa zahra",6,30], ["Tehreem Iqbal",9,30],
+    ["Zainab Abdul Qadir",9,30], ["Naksh",6,30], ["Muhammad Nabeel",6,30],
+    ["Hassaninrada",10,30], ["Mohammed bin Munazzam",9,30], ["Abdullah Masood",8,30],
+    ["Hasnain",8,30], ["Barqa",9,30], ["Hassan Farhan",9,30], ["Hamza",8,30],
+    ["Alisha ashok",8,30], ["Maryam moeen",7,30], ["M.abban khan",9,30],
+    ["Abdul Rafay Kashif",6,30], ["Sudais irshad",9,30], ["Vedika Kumari",9,30],
+    ["Adina farhat",6,30]
   ];
 
-  // ===== Students scoring 30 =====
+  // Students Scoring 30
   const byClass30 = {};
   rows.filter(r => r[2] === 30).forEach(([name, cls]) => {
-    if (!byClass30[cls]) byClass30[cls] = [];
-    byClass30[cls].push(name);
+    (byClass30[cls] ||= []).push(name);
   });
 
-  const x = [], y = [], hoverText = [];
-  Object.keys(byClass30).sort((a,b)=>a-b).forEach(cls=>{
+  const x = [], y = [], hoverText = [], barText = [];
+  Object.keys(byClass30).sort((a,b)=>a-b).forEach(cls => {
+    const count = byClass30[cls].length;
     x.push("Class " + cls);
-    y.push(byClass30[cls].length);
+    y.push(count);
     hoverText.push(byClass30[cls].join("<br>"));
+    barText.push(`${count} students`);
   });
 
   Plotly.newPlot("score30Chart", [{
-    type:"bar",
+    type: "bar",
     x, y,
-    marker:{color:"#66B2FF"},
-    text:y.map(String),
-    textposition:"outside",
-    hoverinfo:"text",
-    hovertext:hoverText
+    marker: { color: "#66B2FF" },
+    text: barText,
+    textposition: "outside",
+    hoverinfo: "text",
+    hovertext: hoverText
   }], {
-    margin:{t:30,l:40,r:20,b:40},
-    yaxis:{title:"Students", rangemode:"tozero"},
-    xaxis:{title:"Class"}
-  }, {responsive:true});
+    margin: { t: 30, l: 40, r: 20, b: 40 },
+    yaxis: { title: "Students", rangemode: "tozero" },
+    xaxis: { title: "Class" }
+  }, { responsive: true });
 
   document.getElementById('score30Chart').on('plotly_click', function(data){
     const idx = data.points[0].pointIndex;
-    alert(`${x[idx]}:\n${byClass30[parseInt(x[idx].replace("Class ",""))].join("\n")}`);
+    const clsNum = parseInt(x[idx].replace("Class ",""));
+    const students = byClass30[clsNum];
+    alert(`Class ${clsNum} — ${students.length} Students:\n${students.join("\n")}`);
   });
 
-  // ===== Class-wise attempts =====
+  // Class-wise Attempts
   const attemptData = [
-     { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
+    { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
   { name: "Ghania Ali", class: 7, score: 15, date: "8/14/2025" },
   { name: "Muhammad hassan", class: 7, score: 24, date: "8/14/2025" },
   { name: "Ikrash aslam", class: 7, score: 19, date: "8/14/2025" },
@@ -322,61 +326,56 @@
   { name: "Abiha Shahid", class: 8, score: 26, date: "8/14/2025" },
   { name: "Maryum Imtiaz", class: 9, score: 24, date: "8/14/2025" },
   { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" }
-  }
   ];
 
   const byClassAttempt = {};
-  attemptData.forEach(({name, class:cls}) => {
-    if (!byClassAttempt[cls]) byClassAttempt[cls] = [];
-    byClassAttempt[cls].push(name);
+  attemptData.forEach(({ name, class: cls }) => {
+    (byClassAttempt[cls] ||= []).push(name);
   });
 
   const labels = Object.keys(byClassAttempt).sort((a,b)=>a-b);
   const counts = labels.map(cls => byClassAttempt[cls].length);
 
   const ctx = document.getElementById("attemptChart").getContext("2d");
-  const attemptChart = new Chart(ctx, {
+  new Chart(ctx, {
     type: "bar",
     data: {
-      labels: labels.map(l=>"Class "+l),
-      datasets:[{
-        label:"Student Attempts",
+      labels: labels.map(l => "Class " + l),
+      datasets: [{
+        label: "Student Attempts",
         data: counts,
         backgroundColor: "#FF9999",
-        borderColor:"#333",
-        borderWidth:1
+        borderColor: "#333",
+        borderWidth: 1
       }]
     },
     options: {
-      responsive:true,
+      responsive: true,
       plugins: {
-        datalabels: {
-          color: '#000',
-          anchor: 'end',
-          align: 'top',
-          formatter: (value) => value
-        },
-        legend:{ display:false },
+        legend: { display: false },
         tooltip: {
           callbacks: {
             label: (tooltipItem) => {
               const cls = parseInt(labels[tooltipItem.dataIndex]);
-              return byClassAttempt[cls].join(", ");
+              return `${counts[tooltipItem.dataIndex]} students: ${byClassAttempt[cls].join(", ")}`;
             }
           }
         }
       },
       onClick: (e, elements) => {
-        if (elements.length > 0) {
+        if (elements.length) {
           const idx = elements[0].index;
           const cls = parseInt(labels[idx]);
-          alert(`Class ${cls}:\n${byClassAttempt[cls].join("\n")}`);
+          const students = byClassAttempt[cls];
+          alert(`Class ${cls} — ${students.length} Students:\n${students.join("\n")}`);
         }
       },
-      scales: { y: { beginAtZero:true } }
-    },
-    plugins: [ChartDataLabels]
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 } }
+      }
+    }
   });
 </script>
 </body>
 </html>
+
