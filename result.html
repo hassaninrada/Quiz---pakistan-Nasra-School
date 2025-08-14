@@ -88,8 +88,8 @@
     }, {responsive:true});
 
     // -------- Chart.js for class-wise attempts --------
-    const data = [
-      { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
+  window.onload = function() {
+  const data = [  { name: "Attiq", class: 7, score: 18, date: "8/14/2025" },
   { name: "Ghania Ali", class: 7, score: 15, date: "8/14/2025" },
   { name: "Muhammad hassan", class: 7, score: 24, date: "8/14/2025" },
   { name: "Ikrash aslam", class: 7, score: 19, date: "8/14/2025" },
@@ -302,37 +302,36 @@
   { name: "Ayan Noorani", class: 10, score: 27, date: "8/14/2025" },
   { name: "Abiha Shahid", class: 8, score: 26, date: "8/14/2025" },
   { name: "Maryum Imtiaz", class: 9, score: 24, date: "8/14/2025" },
-  { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" }
-      // Add rest of your data here
-    ];
+  { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" } ];
 
-    const classCount = {};
-    data.forEach(row => {
-      classCount[row.class] = (classCount[row.class] || 0) + 1;
-    });
+  const classCount = {};
+  data.forEach(row => {
+    classCount[row.class] = (classCount[row.class] || 0) + 1;
+  });
 
-    const labels = Object.keys(classCount).sort((a,b)=>a-b);
-    const counts = labels.map(cls => classCount[cls]);
+  const labels = Object.keys(classCount).sort((a,b)=>a-b);
+  const counts = labels.map(cls => classCount[cls]);
 
-    new Chart(document.getElementById('classChart'), {
-      type:'bar',
-      data:{
-        labels:labels.map(cls=>"Class "+cls),
-        datasets:[{
-          label:'Number of Students Attempted',
-          data:counts,
-          backgroundColor:'#4e73df'
-        }]
-      },
-      options:{
-        responsive:true,
-        plugins:{legend:{display:false}},
-        scales:{
-          y:{beginAtZero:true, title:{display:true,text:'Students'}},
-          x:{title:{display:true,text:'Class'}}
-        }
+  new Chart(document.getElementById('classChart'), {
+    type:'bar',
+    data:{
+      labels:labels.map(cls=>"Class "+cls),
+      datasets:[{
+        label:'Number of Students Attempted',
+        data:counts,
+        backgroundColor:'#4e73df'
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:true, title:{display:true,text:'Students'}},
+        x:{title:{display:true,text:'Class'}}
       }
-    });
+    }
+  });
+};
   </script>
 
 </body>
