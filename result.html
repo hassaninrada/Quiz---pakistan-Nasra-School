@@ -303,11 +303,12 @@
   { name: "Abiha Shahid", class: 8, score: 26, date: "8/14/2025" },
   { name: "Maryum Imtiaz", class: 9, score: 24, date: "8/14/2025" },
   { name: "M. Saad", class: 6, score: 16, date: "8/14/2025" }
+      // Add rest of your data here
     ];
 
     const classCount = {};
     data.forEach(row => {
-      classCount[row.Class] = (classCount[row.Class] || 0) + 1;
+      classCount[row.class] = (classCount[row.class] || 0) + 1;
     });
 
     const labels = Object.keys(classCount).sort((a,b)=>a-b);
