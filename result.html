@@ -7,27 +7,32 @@
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    img {
+  /* Global image style for responsiveness */
+img {
   max-width: 100%;
   height: auto;
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Soft shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  transition: all 0.35s ease;
 }
 
-img:hover {
-  transform: scale(1.05); /* Slight zoom on hover */
-  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+/* Special style for your logos */
+.logo, .flag {
+  height: 55px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), 
+              0 0 12px rgba(102, 175, 255, 0.4); /* Soft blue glow */
 }
 
-    .logo, .flag {
-  height: 50px;
-  border-radius: 8px;
-  transition: transform 0.3s ease;
-}
-
+/* Hover effect for interactivity */
 .logo:hover, .flag:hover {
-  transform: scale(1.1);
+  transform: scale(1.12) rotate(1deg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25),
+              0 0 16px rgba(102, 175, 255, 0.6);
+  background: rgba(255, 255, 255, 0.25);
 }
 
     h2 {
