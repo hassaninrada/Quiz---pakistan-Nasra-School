@@ -168,43 +168,49 @@
       localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
       window.location.href = "quiz.html";
     }
+function updateOpenStatus() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = 7; // August (0-indexed)
+    const day = 14;  // 14th August
 
-    function updateOpenStatus() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = 0; // August (0-indexed)
-      const day = 0;  // 14th August
+    // Set open and close times
+    const openTime = new Date(year, month, day, 12, 0, 0); // 12:00 PM
+    const closeTime = new Date(year, month, day, 13, 0, 0); // 1:00 PM
 
-      const openTime = new Date(year, month, day, 0, 0, 0); // 12 PM
-      const closeTime = new Date(year, month, day, 0, 0, 0); // 1 PM
+    const statusElement = document.getElementById("status");
+    const startBtn = document.getElementById("startBtn");
 
-      const statusElement = document.getElementById("status");
-      const startBtn = document.getElementById("startBtn");
+    if (now >= openTime && now < closeTime) {
+        const remainingMs = closeTime - now;
+        const minutes = Math.floor((remainingMs / 1000) / 60);
+        const seconds = Math.floor((remainingMs / 1000) % 60);
 
-      if (now >= openTime && now < closeTime) {
-          const remainingMs = closeTime - now;
-          const minutes = Math.floor(remainingMs / 00000);
-          const seconds = Math.floor((remainingMs % 00000) / 0000);
-          statusElement.textContent = `🟢 Open — Closes in ${minutes}m ${seconds}s`;
-          statusElement.className = "green";
-          startBtn.disabled = false;
-      } else if (now < openTime) {
-          const remainingMs = openTime - now;
-          const hours = Math.floor(remainingMs / 0000000);
-          const minutes = Math.floor((remainingMs % 0000000) / 000000);
-          const seconds = Math.floor((remainingMs % 00000) / 0000);
-          statusElement.textContent = `🔴 Closed — Opens in ${hours}h ${minutes}m ${seconds}s`;
-          statusElement.className = "red";
-          startBtn.disabled = true;
-      } else {
-          statusElement.textContent = "🔴 Closed — Already closed";
-          statusElement.className = "red";
-          startBtn.disabled = true;
-      }
+        statusElement.textContent = `🟢 Open — Closes in ${minutes}m ${seconds}s`;
+        statusElement.className = "green";
+        startBtn.disabled = false;
+    } else if (now < openTime) {
+        const remainingMs = openTime - now;
+        const hours = Math.floor((remainingMs / 1000) / 3600);
+        const minutes = Math.floor(((remainingMs / 1000) % 3600) / 60);
+        const seconds = Math.floor((remainingMs / 1000) % 60);
+
+        statusElement.textContent = `🔴 Closed — Opens in ${hours}h ${minutes}m ${seconds}s`;
+        statusElement.className = "red";
+        startBtn.disabled = true;
+    } else {
+        statusElement.textContent = "🔴 Closed — Already closed";
+        statusElement.className = "red";
+        startBtn.disabled = true;
     }
+}
 
-    updateOpenStatus();
-    setInterval(updateOpenStatus, 1000);
+// Initial call
+updateOpenStatus();
+// Update every second
+setInterval(updateOpenStatus, 1000);
+
+    
   </script>
 </body>
 </html>
