@@ -69,15 +69,8 @@
       transition: background-color 0.3s ease, opacity 0.3s ease;
     }
 
-    button:hover:enabled {
+    button:hover {
       background-color: #0056b3;
-    }
-
-    button:disabled {
-      background-color: #cccccc;
-      color: #666666;
-      cursor: not-allowed;
-      opacity: 0.7;
     }
 
     #status {
@@ -87,26 +80,9 @@
       padding: 15px 25px;
       border-radius: 12px;
       text-align: center;
-      transition: all 0.5s ease;
-      animation: pulse 1s infinite;
-    }
-
-    #status.green {
       background-color: #d4edda;
       border: 2px solid #28a745;
       color: #155724;
-    }
-
-    #status.red {
-      background-color: #f8d7da;
-      border: 2px solid #dc3545;
-      color: #721c24;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-      100% { transform: scale(1); }
     }
 
     footer {
@@ -137,7 +113,7 @@
   <div class="container">
     <h2>Student Login</h2>
 
-    <p id="status">Checking time...</p>
+    <p id="status">✅ Ready to start</p>
 
     <select id="studentClass" required>
       <option value="">Select Your Class</option>
@@ -150,7 +126,7 @@
 
     <input type="text" id="studentName" placeholder="Enter your Name" required>
 
-    <button id="startBtn" onclick="startQuiz()" disabled>Start Quiz</button>
+    <button id="startBtn" onclick="startQuiz()">Start Quiz</button>
   </div>
 
   <footer>Powered by Hassanin Rada</footer>
@@ -168,49 +144,6 @@
       localStorage.setItem("studentData", JSON.stringify({ studentClass, name }));
       window.location.href = "quiz.html";
     }
-function updateOpenStatus() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = 7; // August (0-indexed)
-    const day = 14;  // 14th August
-
-    // Set open and close times
-    const openTime = new Date(year, month, day, 12, 0, 0); // 12:00 PM
-    const closeTime = new Date(year, month, day, 13, 0, 0); // 1:00 PM
-
-    const statusElement = document.getElementById("status");
-    const startBtn = document.getElementById("startBtn");
-
-    if (now >= openTime && now < closeTime) {
-        const remainingMs = closeTime - now;
-        const minutes = Math.floor((remainingMs / 1000) / 60);
-        const seconds = Math.floor((remainingMs / 1000) % 60);
-
-        statusElement.textContent = `🟢 Open — Closes in ${minutes}m ${seconds}s`;
-        statusElement.className = "green";
-        startBtn.disabled = false;
-    } else if (now < openTime) {
-        const remainingMs = openTime - now;
-        const hours = Math.floor((remainingMs / 1000) / 3600);
-        const minutes = Math.floor(((remainingMs / 1000) % 3600) / 60);
-        const seconds = Math.floor((remainingMs / 1000) % 60);
-
-        statusElement.textContent = `🔴 Closed — Opens in ${hours}h ${minutes}m ${seconds}s`;
-        statusElement.className = "red";
-        startBtn.disabled = true;
-    } else {
-        statusElement.textContent = "🔴 Closed — Already closed";
-        statusElement.className = "red";
-        startBtn.disabled = true;
-    }
-}
-
-// Initial call
-updateOpenStatus();
-// Update every second
-setInterval(updateOpenStatus, 1000);
-
-    
   </script>
 </body>
 </html>
